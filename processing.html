@@ -40,16 +40,17 @@
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Заявка</h1>
       <div id="loader" class="loader" role="status" aria-label="Сохраняем"></div>
-      <p id="processing-text" class="processing-message">Записываем демо-заявку в этой вкладке…</p>
+      <p id="processing-text" class="processing-message">Записываем заявку…</p>
       <p id="missing-receipt" class="error-message" hidden>Заявки нет. <a href="dashboard.html">Перейти к обмену</a></p>
       <div id="result" hidden>
-        <p class="success-message">Заявка записана. В блокчейн ничего не отправлено.</p>
+        <p id="result-lead" class="success-message">Перевод ограничен показанной суммой. Выплата придёт на ваш адрес.</p>
         <div id="result-body" class="swap-details"></div>
         <a class="btn primary-btn" href="dashboard.html">Новый обмен</a>
       </div>
     </div>
   </main>
   <script src="app.js"></script>
+  <script src="swap-data.js"></script>
   <script src="processing.js"></script>
 </body>
 </html>

@@ -18,6 +18,14 @@
   const toChainSelect = document.getElementById("to-chain");
   const tonBox = document.getElementById("ton-address-container");
   const tonInput = document.getElementById("ton-address");
+  const payoutBox = document.getElementById("payout-container");
+  const payoutInput = document.getElementById("payout-address");
+  const manualBox = document.getElementById("manual-box");
+  const manualHash = document.getElementById("manual-hash");
+  const manualSender = document.getElementById("manual-sender");
+  const depositLabel = document.getElementById("deposit-label");
+  const depositAddress = document.getElementById("deposit-address");
+  const copyDeposit = document.getElementById("copy-deposit");
   const rateInfo = document.getElementById("rate-info");
   const swapButton = document.getElementById("swap-button");
   const walletHint = document.getElementById("wallet-hint");
@@ -26,28 +34,100 @@
   let priceAt = 0;
   let requestId = 0;
   let inputTimer = 0;
+  let wallets = {};
+  let walletsReady = false;
+  let walletsError = "";
 
-  function isTonAddress(value) {
-    const text = String(value || "").trim();
-    if (/^(EQ|UQ|kQ|0Q)[A-Za-z0-9_-]{46}$/.test(text)) return true;
-    if (/^-?\d+:[0-9a-fA-F]{64}$/.test(text)) return true;
-    return false;
+  function chainName(key) {
+    return (window.BP && window.BP.chains && window.BP.chains[key]) || key;
+  }
+
+  function payMode() {
+    return window.BPSwap.paymentMode(fromChainSelect.value, fromTokenSelect.value);
+  }
+
+  function depositFor(chain) {
+    return String((wallets && wallets[chain]) || "").trim();
+  }
+
+  function payoutValue() {
+    if (toChainSelect.value === "ton") return tonInput.value.trim();
+    return payoutInput.value.trim();
   }
 
   function formProblem() {
-    const amount = parseFloat(fromAmountInput.value);
+    const raw = String(fromAmountInput.value || "").trim();
+    if (!raw) return "";
+    if (!/^\d+(\.\d+)?$/.test(raw)) return "Введите сумму больше нуля";
+    const amount = Number(raw);
     if (!Number.isFinite(amount) || amount <= 0) return "Введите сумму больше нуля";
     if (amount > 1e12) return "Слишком большая сумма";
-    if (fromChainSelect.value === toChainSelect.value) return "Выберите разные сети";
-    if (toChainSelect.value === "ton" && !isTonAddress(tonInput.value)) {
-      return "Для TON нужен адрес EQ…, UQ… или 0:…";
+    if (fromChainSelect.value === toChainSelect.value && fromTokenSelect.value === toTokenSelect.value) {
+      return "Выберите другую монету или другую сеть";
     }
+    const mode = payMode();
+    if (mode === "unsupported") return "Из этой сети через сайт отправляются только её монета, USDT и USDC";
+    if (!walletsReady) return walletsError || "Загружаем адрес приёма…";
+    if (walletsError) return walletsError;
+    const deposit = depositFor(fromChainSelect.value);
+    if (!window.BPSwap.isReceiveAddress(fromChainSelect.value, deposit)) {
+      return "Адрес для этой сети ещё готовится. Выберите другую сеть или обновите страницу.";
+    }
+    if (!window.BPSwap.isReceiveAddress(toChainSelect.value, payoutValue())) {
+      return toChainSelect.value === "ton"
+        ? "Для выплаты нужен адрес TON: EQ…, UQ… или 0:…"
+        : "Для выплаты нужен адрес 0x… из 40 знаков";
+    }
+    if (mode === "manual") {
+      if (!window.BPSwap.isTxHash("ton", manualHash.value.trim())) return "Вставьте хеш перевода в TON";
+      if (!window.BPSwap.isTonAddress(manualSender.value.trim())) return "Вставьте адрес TON, с которого отправили";
+    }
+    if (mode === "wallet" && !window.ethereum) return "Для этой монеты нужен MetaMask";
     return "";
   }
 
-  function syncTonField() {
-    const show = toChainSelect.value === "ton";
-    tonBox.hidden = !show;
+  function copyText(text, button) {
+    function done() {
+      const prev = button.textContent;
+      button.textContent = "Скопировано";
+      window.setTimeout(function () { button.textContent = prev; }, 1200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+      return;
+    }
+    fallback();
+    function fallback() {
+      const area = document.createElement("textarea");
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand("copy"); done(); } catch (err) {}
+      area.remove();
+    }
+  }
+
+  function syncForm() {
+    const toTon = toChainSelect.value === "ton";
+    const mode = payMode();
+    tonBox.hidden = !toTon;
+    payoutBox.hidden = toTon;
+    manualBox.hidden = mode !== "manual";
+    swapButton.textContent = mode === "manual" ? "Я отправил TON" : (mode === "wallet" ? "Перейти к оплате" : "Эта пара недоступна");
+    const deposit = depositFor(fromChainSelect.value);
+    const valid = walletsReady && window.BPSwap.isReceiveAddress(fromChainSelect.value, deposit);
+    depositLabel.textContent = "Куда отправить в сети " + chainName(fromChainSelect.value);
+    if (!walletsReady) depositAddress.textContent = walletsError || "Загружаем адрес…";
+    else if (walletsError) depositAddress.textContent = walletsError;
+    else if (valid) depositAddress.textContent = deposit;
+    else depositAddress.textContent = "Адрес для этой сети ещё готовится";
+    copyDeposit.hidden = !valid;
+  }
+
+  function maybeFillPayout(address) {
+    if (toChainSelect.value === "ton") return;
+    if (payoutInput.value.trim()) return;
+    if (address && window.BPSwap.isEvmAddress(address)) payoutInput.value = address;
   }
 
   function setRate(text) {
@@ -85,7 +165,7 @@
 
   async function updateAmount() {
     const my = ++requestId;
-    syncTonField();
+    syncForm();
     const amount = parseFloat(fromAmountInput.value);
     if (!Number.isFinite(amount) || amount <= 0 || amount > 1e12) {
       toAmountInput.value = "";
@@ -132,6 +212,8 @@
     document.getElementById("wallet-info").style.display = "flex";
     document.getElementById("connect-wallet").style.display = "none";
     walletHint.hidden = true;
+    maybeFillPayout(address);
+    updateAmount();
   }
 
   function hideWallet() {
@@ -156,6 +238,19 @@
       showWallet(address);
       window.BP.refreshAuth();
     }).catch(function () {});
+  }
+
+  async function refreshWallets() {
+    try {
+      const ledger = await import("./ledger.js");
+      wallets = await ledger.getWallets();
+      walletsError = "";
+    } catch (err) {
+      wallets = {};
+      walletsError = "Адрес обмена сейчас не открылся. Обновите страницу через минуту.";
+    }
+    walletsReady = true;
+    syncForm();
   }
 
   document.getElementById("connect-wallet").addEventListener("click", async function () {
@@ -185,6 +280,11 @@
     button.disabled = false;
   });
 
+  copyDeposit.addEventListener("click", function () {
+    const deposit = depositFor(fromChainSelect.value);
+    if (window.BPSwap.isReceiveAddress(fromChainSelect.value, deposit)) copyText(deposit, copyDeposit);
+  });
+
   document.getElementById("swap-direction").addEventListener("click", function () {
     [["from-chain", "to-chain"], ["from-token", "to-token"]].forEach(function (pair) {
       const left = document.getElementById(pair[0]);
@@ -208,7 +308,9 @@
   [fromTokenSelect, toTokenSelect, fromChainSelect, toChainSelect].forEach(function (node) {
     node.addEventListener("change", updateAmount);
   });
-  tonInput.addEventListener("input", scheduleUpdate);
+  [tonInput, payoutInput, manualHash, manualSender].forEach(function (node) {
+    node.addEventListener("input", scheduleUpdate);
+  });
 
   document.addEventListener("bp-wallet", function () {
     const saved = window.BP.wallet();
@@ -216,22 +318,30 @@
     else hideWallet();
   });
 
-  form.addEventListener("submit", function (event) {
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
     if (swapButton.disabled) return;
+    swapButton.disabled = true;
+    await refreshWallets();
     const problem = formProblem();
     if (problem || !toAmountInput.value) {
       setRate(problem || "Дождитесь курса");
+      swapButton.disabled = true;
       return;
     }
+    const mode = payMode();
     const draft = {
       fromChain: fromChainSelect.value,
       toChain: toChainSelect.value,
       fromToken: fromTokenSelect.value,
       toToken: toTokenSelect.value,
-      fromAmount: fromAmountInput.value,
+      fromAmount: String(fromAmountInput.value).trim(),
       toAmount: toAmountInput.value,
-      tonAddress: toChainSelect.value === "ton" ? tonInput.value.trim() : "",
+      payoutAddress: payoutValue(),
+      depositAddress: depositFor(fromChainSelect.value),
+      senderAddress: mode === "manual" ? manualSender.value.trim() : (window.BP.wallet().address || ""),
+      txHash: mode === "manual" ? manualHash.value.trim() : "",
+      payMode: mode,
       wallet: window.BP.wallet().address || "",
       rateText: rateInfo.textContent,
       fee: "4.5%"
@@ -240,7 +350,7 @@
     location.href = "confirmation.html";
   });
 
-  syncTonField();
+  syncForm();
   restoreWallet();
-  updateAmount();
+  refreshWallets().then(updateAmount);
 })();

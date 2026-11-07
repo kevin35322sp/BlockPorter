@@ -47,15 +47,16 @@
   }
 
   function authMarkup() {
+    const admin = readKey("bpIsAdmin") === "1" ? '<a href="admin.html">Заявки</a> ' : "";
     const current = wallet();
     const label = readKey("authLabel");
     if (current.connected) {
-      return '<a href="profile.html">' + escapeHtml(shortAddress(current.address)) + '</a> <button type="button" class="nav-logout">Выйти</button>';
+      return admin + '<a href="profile.html">' + escapeHtml(shortAddress(current.address)) + '</a> <button type="button" class="nav-logout">Выйти</button>';
     }
     if (readKey("authProvider") === "google" && label) {
-      return '<a href="profile.html">' + escapeHtml(label) + '</a> <button type="button" class="nav-logout">Выйти</button>';
+      return admin + '<a href="profile.html">' + escapeHtml(label) + '</a> <button type="button" class="nav-logout">Выйти</button>';
     }
-    return '<a href="auth.html">Войти</a>';
+    return admin + '<a href="auth.html">Войти</a>';
   }
 
   function fillAuth() {
@@ -139,7 +140,26 @@
     await forgetWallet();
     writeKey("authProvider", "");
     writeKey("authLabel", "");
+    writeKey("bpIsAdmin", "");
     location.href = "index.html";
+  }
+
+  function refreshAdminFlag() {
+    if (readKey("authProvider") !== "google") return;
+    import("./firebase-config.js").then(function (loaded) {
+      return loaded.loadAuth();
+    }).then(function (authApi) {
+      authApi.onAuthStateChanged(authApi.auth, function (user) {
+        if (!user || !user.email) return;
+        import("./ledger.js").then(function (ledger) {
+          return ledger.isAdmin(user.email);
+        }).then(function (ok) {
+          writeKey("bpIsAdmin", ok ? "1" : "");
+          fillAuth();
+          setActive();
+        }).catch(function () {});
+      });
+    }).catch(function () {});
   }
 
   function watchWallet() {
@@ -167,6 +187,7 @@
     refreshAuth();
     setupMenu();
     watchWallet();
+    refreshAdminFlag();
   }
 
   window.BP = {

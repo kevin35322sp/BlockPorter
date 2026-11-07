@@ -39,7 +39,7 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Подтверждение</h1>
-      <p class="demo-banner">Подтверждение не открывает кошелёк и не создаёт транзакцию.</p>
+      <p class="demo-banner">Проверьте монету, сумму и адрес. Подпись отправит только это и не откроет доступ к остальным средствам. Секретная фраза не нужна. Выплата придёт на ваш адрес, плата сети спишется отдельно.</p>
 
       <p id="missing-draft" class="error-message" hidden>Нет данных обмена. Сначала заполните форму.</p>
 
@@ -48,11 +48,13 @@
         <p><strong>Сеть получения:</strong> <span id="to-chain-display">—</span></p>
         <p><strong>Токен отправления:</strong> <span id="from-token-display">—</span></p>
         <p><strong>Токен получения:</strong> <span id="to-token-display">—</span></p>
-        <p><strong>Сумма отправления:</strong> <span id="from-amount-display">—</span></p>
-        <p><strong>Сумма получения:</strong> <span id="to-amount-display">—</span></p>
-        <p><strong>Комиссия в формуле:</strong> <span id="fee-display">4.5%</span></p>
-        <p><strong>Кошелёк:</strong> <span id="wallet-display">—</span></p>
-        <p id="ton-address-display" hidden><strong>Адрес TON:</strong> <span id="ton-address-value"></span></p>
+        <p><strong>С вашего кошелька уйдёт:</strong> <span id="from-amount-display">—</span></p>
+        <p><strong>Вы получите:</strong> <span id="to-amount-display">—</span></p>
+        <p><strong>Комиссия сервиса:</strong> <span id="fee-display">4.5%</span></p>
+        <p><strong>Куда уйдут средства:</strong> <span id="deposit-display" class="mono">—</span></p>
+        <p><strong>Ваш адрес для выплаты:</strong> <span id="payout-display" class="mono">—</span></p>
+        <p id="sender-row" hidden><strong>Ваш адрес отправителя:</strong> <span id="sender-display" class="mono"></span></p>
+        <p id="hash-row" hidden><strong>Хеш перевода:</strong> <span id="hash-display" class="mono"></span></p>
       </div>
 
       <div class="terms-section">
@@ -60,12 +62,14 @@
         <label for="terms-checkbox">Я прочитал <a href="terms.html" target="_blank" rel="noopener">условия обмена</a></label>
       </div>
 
-      <button id="confirm-swap" class="btn primary-btn" type="button" disabled>Подтвердить обмен</button>
+      <button id="confirm-swap" class="btn primary-btn" type="button" disabled>Подписать перевод</button>
       <p id="error-message" class="error-message" hidden></p>
       <a class="back-link" href="dashboard.html">Изменить заявку</a>
     </div>
   </main>
   <script src="app.js"></script>
+  <script src="swap-data.js"></script>
+  <script src="payment.js"></script>
   <script src="confirmation.js"></script>
 </body>
 </html>

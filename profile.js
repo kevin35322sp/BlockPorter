@@ -96,7 +96,7 @@
       statusEl.textContent = "Нет входа";
       statusEl.classList.remove("connected");
       const prompt = el("div", "connect-prompt");
-      prompt.append(el("p", null, "Войдите через Google или подключите кошелёк. Баланс только читается, перевод отсюда не запускается."));
+      prompt.append(el("p", null, "Войдите через Google или подключите кошелёк. Секретная фраза не нужна: здесь баланс только читается, перевод не запускается."));
       const actions = el("div", "profile-actions");
       const login = el("a", "btn neon-btn", "Войти");
       login.href = "auth.html";

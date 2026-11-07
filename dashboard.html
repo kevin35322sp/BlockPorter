@@ -40,7 +40,7 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Кроссчейн обмен</h1>
-      <p class="demo-banner">Демо-режим. Курс берётся у CoinGecko, 4.5% входят только в формулу. Средства не списываются.</p>
+      <p class="demo-banner">Средства под вашим контролем: уйдёт только выбранная монета и показанная сумма. Секретную фразу сайт не спрашивает, остальные активы не трогает. Комиссия 4.5% уже учтена в сумме получения.</p>
 
       <div class="wallet-section">
         <button id="connect-wallet" class="btn neon-btn" type="button">Подключить MetaMask</button>
@@ -49,7 +49,7 @@
           <button id="disconnect" class="btn disconnect-btn" type="button">Отключить</button>
         </div>
       </div>
-      <p id="wallet-hint" class="hint">Кошелёк нужен, чтобы записать адрес в заявку. Подпись не запрашивается.</p>
+      <p id="wallet-hint" class="hint">MetaMask нужен только чтобы подтвердить один перевод ETH, BNB, MATIC, USDT или USDC. Ключ из кошелька не уходит. TON вы отправляете сами и вставляете хеш сюда.</p>
 
       <form id="swap-form" class="swap-form">
         <div class="network-row">
@@ -84,8 +84,14 @@
           </div>
         </div>
 
+        <div id="deposit-box" class="deposit-box">
+          <p id="deposit-label" class="address-label">Куда отправить</p>
+          <p id="deposit-address" class="mono">Загружаем адрес…</p>
+          <button id="copy-deposit" class="btn copy-btn" type="button" hidden>Копировать адрес</button>
+        </div>
+
         <div class="swap-box from-box">
-          <label class="swap-label" for="from-amount">Отдаёте</label>
+          <label class="swap-label" for="from-amount">Отправляете</label>
           <div class="input-row">
             <input type="number" id="from-amount" placeholder="0.0" step="any" min="0" inputmode="decimal"/>
             <select id="from-token" class="token-select" aria-label="Токен отдаёте">
@@ -120,18 +126,32 @@
           </div>
         </div>
 
+        <div id="payout-container" class="ton-address-container">
+          <label for="payout-address">Ваш адрес для выплаты</label>
+          <input type="text" id="payout-address" class="field-input" placeholder="0x…" autocomplete="off" spellcheck="false"/>
+        </div>
+
         <div id="ton-address-container" class="ton-address-container" hidden>
-          <label for="ton-address">Адрес кошелька TON</label>
+          <label for="ton-address">Ваш адрес TON для выплаты</label>
           <input type="text" id="ton-address" placeholder="EQ…, UQ… или 0:…" autocomplete="off" spellcheck="false"/>
         </div>
 
-        <button id="swap-button" class="btn primary-btn" type="submit" disabled>Обменять</button>
-        <p class="commission-info">Комиссия в формуле: 4.5%</p>
+        <div id="manual-box" class="ton-address-container" hidden>
+          <p class="hint">Отправьте TON на адрес выше из своего кошелька. Затем вставьте хеш и адрес отправителя. Ключ TON на сайт не попадает.</p>
+          <label for="manual-hash">Хеш перевода</label>
+          <input type="text" id="manual-hash" class="field-input" placeholder="Хеш из кошелька TON" autocomplete="off" spellcheck="false"/>
+          <label for="manual-sender">Адрес, с которого отправили</label>
+          <input type="text" id="manual-sender" class="field-input" placeholder="EQ…, UQ… или 0:…" autocomplete="off" spellcheck="false"/>
+        </div>
+
+        <button id="swap-button" class="btn primary-btn" type="submit" disabled>Перейти к оплате</button>
+        <p class="commission-info">Комиссия 4.5% уже в сумме, которую вы получите. Плата сети — отдельно.</p>
         <p id="rate-info" class="rate-info">Введите сумму</p>
       </form>
     </div>
   </main>
   <script src="app.js"></script>
+  <script src="swap-data.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>

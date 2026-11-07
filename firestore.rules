@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null && request.auth.token.email is string;
+    }
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.token.email.lower()));
+    }
+    function sameMoney(next, prev) {
+      return next.fromChain == prev.fromChain
+        && next.toChain == prev.toChain
+        && next.fromToken == prev.fromToken
+        && next.toToken == prev.toToken
+        && next.fromAmount == prev.fromAmount
+        && next.toAmount == prev.toAmount
+        && next.senderAddress == prev.senderAddress
+        && next.payoutAddress == prev.payoutAddress
+        && next.depositAddress == prev.depositAddress
+        && next.txHash == prev.txHash
+        && next.createdAt == prev.createdAt;
+    }
+
+    match /admins/{email} {
+      allow read: if signedIn() && request.auth.token.email.lower() == email;
+      allow write: if false;
+    }
+
+    match /config/wallets {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /orders/{id} {
+      allow create: if request.resource.data.status == "pending"
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.fromAmount is string
+        && request.resource.data.toAmount is string
+        && request.resource.data.txHash is string
+        && request.resource.data.txHash.size() > 8
+        && request.resource.data.txHash.size() < 200
+        && request.resource.data.senderAddress is string
+        && request.resource.data.payoutAddress is string
+        && request.resource.data.depositAddress is string;
+      allow read: if isAdmin();
+      allow update: if isAdmin()
+        && sameMoney(request.resource.data, resource.data)
+        && request.resource.data.status in ["pending", "paid"];
+      allow delete: if false;
+    }
+  }
+}

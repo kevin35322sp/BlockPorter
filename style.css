@@ -2914,3 +2914,82 @@ button.swap-arrow-down {
 @media (prefers-reduced-motion: reduce) {
   .floating-card, .swap-arrow-down, .swap-arrow-right { animation: none; }
 }
+
+.deposit-box {
+  border: 1px solid rgba(0, 255, 157, 0.28);
+  border-radius: 16px;
+  padding: 14px;
+  margin: 0 0 8px;
+  text-align: left;
+}
+
+.mono, .addr-value {
+  font-family: ui-monospace, Consolas, monospace;
+  word-break: break-all;
+}
+
+.swap-main .field-input,
+.swap-main #manual-hash,
+.swap-main #manual-sender,
+.swap-main #payout-address {
+  width: 100%;
+  padding: 14px;
+  margin: 0 0 12px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 255, 157, 0.18);
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+}
+
+.swap-main .deposit-box .copy-btn,
+.desk .copy-btn,
+.order-card .copy-btn {
+  width: auto;
+  margin-top: 8px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.swap-main #confirm-swap { font-size: 1.05rem; line-height: 1.35; }
+
+.admin-main { align-items: flex-start; }
+
+.admin-card.swap-card.glass-effect { max-width: 860px; }
+
+.wallet-form label, .orders-title {
+  display: block;
+  margin: 14px 0 6px;
+  color: #d9ffe7;
+  text-align: left;
+}
+
+.order-card {
+  border: 1px solid rgba(0, 255, 157, 0.2);
+  border-radius: 16px;
+  padding: 14px;
+  margin: 0 0 14px;
+  text-align: left;
+}
+
+.order-due { color: #fff; font-weight: 700; }
+
+.addr-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.addr-label { color: #9aa; min-width: 11rem; }
+
+.explorer-link { color: #00ff9d; display: inline-block; margin: 6px 0; }
+
+.status-paid { color: #00ff9d; }
+
+.status-pending { color: #ffd27a; }
+
+.order-card .pay-btn { width: auto; margin-top: 10px; padding: 12px 22px; font-size: 1rem; }
