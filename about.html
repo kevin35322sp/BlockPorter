@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BlockPorter — О проекте</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="logo.svg" alt="BlockPorter" height="40"/>
+      </a>
+      <nav class="nav desktop-nav">
+        <a href="index.html">Главная</a>
+        <a href="dashboard.html">Обмен</a>
+        <a href="about.html">О проекте</a>
+        <a href="profile.html">Профиль</a>
+        <span id="auth-status"><a href="auth.html">Войти</a></span>
+      </nav>
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <nav class="mobile-menu" id="mobile-menu">
+      <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
+      <a href="index.html">Главная</a>
+      <a href="dashboard.html">Обмен</a>
+      <a href="about.html">О проекте</a>
+      <a href="profile.html">Профиль</a>
+      <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
+    </nav>
+  </header>
+
+  <main class="about-page">
+    <section class="hero-about">
+      <div class="container">
+        <h1>BlockPorter</h1>
+        <p class="hero-subtitle">Учебный интерфейс кроссчейн-обмена</p>
+      </div>
+    </section>
+
+    <section class="about-section container">
+      <div class="about-grid">
+        <article class="about-card">
+          <h2>Что это</h2>
+          <p>
+            BlockPorter показывает путь обмена: сети, токены, сумма и подтверждение.
+            Заявка остаётся в браузере. В проекте нет смарт-контракта, который забирал бы актив и возвращал другой.
+          </p>
+          <p>
+            Ключи сайт не просит. MetaMask используется, чтобы показать адрес и прочитать баланс выбранной сети.
+          </p>
+        </article>
+        <article class="about-card">
+          <h2>Что уже работает</h2>
+          <ul class="advantages">
+            <li><span class="icon"><i class="fas fa-percentage"></i></span> Расчёт суммы после комиссии 4.5%</li>
+            <li><span class="icon"><i class="fas fa-chart-line"></i></span> Курсы CoinGecko одним запросом, с паузой в минуту</li>
+            <li><span class="icon"><i class="fas fa-wallet"></i></span> Адрес TON вводится отдельно и проверяется по формату</li>
+            <li><span class="icon"><i class="fas fa-ban"></i></span> Подтверждение не создаёт транзакцию</li>
+            <li><span class="icon"><i class="fas fa-user"></i></span> Вход через Google или адрес MetaMask</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="contact container" id="contact">
+      <div class="contact-card">
+        <h2>Напишите нам</h2>
+        <p>Форма откроет почтовую программу, когда ниже будет указан адрес получателя.</p>
+        <form id="contact-form" class="contact-form">
+          <div class="form-group">
+            <i class="fas fa-user"></i>
+            <input type="text" name="name" placeholder="Ваше имя" required/>
+          </div>
+          <div class="form-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" name="email" placeholder="Ваш email" required/>
+          </div>
+          <div class="form-group">
+            <i class="fas fa-comment-alt"></i>
+            <textarea name="message" placeholder="Сообщение" rows="5" required></textarea>
+          </div>
+          <button type="submit" class="btn submit-btn">Отправить сообщение</button>
+        </form>
+        <p id="form-status" class="status-message" role="status"></p>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+  <script>
+    document.getElementById("contact-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      var status = document.getElementById("form-status");
+      var contactEmail = "";
+      var data = new FormData(this);
+      var name = String(data.get("name") || "").trim();
+      var from = String(data.get("email") || "").trim();
+      var message = String(data.get("message") || "").trim();
+      if (!contactEmail) {
+        status.textContent = "Письмо не отправлено: в about.html не задан адрес получателя.";
+        status.className = "status-message error";
+        return;
+      }
+      var body = "Имя: " + name + "\nEmail: " + from + "\n\n" + message;
+      location.href = "mailto:" + contactEmail + "?subject=" + encodeURIComponent("BlockPorter") + "&body=" + encodeURIComponent(body);
+      status.textContent = "Открываю почтовую программу.";
+      status.className = "status-message success";
+    });
+  </script>
+</body>
+</html>

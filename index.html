@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BlockPorter — Кроссчейн обмен</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="home-body">
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="logo.svg" alt="BlockPorter" height="40"/>
+      </a>
+      <nav class="nav desktop-nav">
+        <a href="index.html">Главная</a>
+        <a href="dashboard.html">Обмен</a>
+        <a href="about.html">О проекте</a>
+        <a href="profile.html">Профиль</a>
+        <span id="auth-status"><a href="auth.html">Войти</a></span>
+      </nav>
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <nav class="mobile-menu" id="mobile-menu">
+      <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
+      <a href="index.html">Главная</a>
+      <a href="dashboard.html">Обмен</a>
+      <a href="about.html">О проекте</a>
+      <a href="profile.html">Профиль</a>
+      <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-layout">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="gradient-text">Кроссчейн-обмен</span><br>
+          в одном окне
+        </h1>
+        <p class="hero-subtitle">
+          Посчитайте перевод между Ethereum, BNB Smart Chain, Polygon, Optimism, Arbitrum и TON.
+          В сумму заложена комиссия 4.5%. Это демо: кошелёк ничего не подписывает.
+        </p>
+        <div class="hero-buttons">
+          <a href="dashboard.html" class="btn neon-btn large">Начать обмен <i class="fas fa-arrow-right"></i></a>
+          <a href="about.html" class="btn outline-btn large">Узнать больше</a>
+        </div>
+      </div>
+      <div class="floating-elements" aria-hidden="true">
+        <div class="floating-card" style="top: 8%; right: 6%; animation-delay: 0s;">
+          <i class="fab fa-ethereum"></i>
+          <span>Ethereum</span>
+        </div>
+        <div class="floating-card" style="top: 38%; right: 18%; animation-delay: 1s;">
+          <i class="fas fa-coins"></i>
+          <span>USDT / USDC</span>
+        </div>
+        <div class="floating-card" style="bottom: 18%; right: 8%; animation-delay: 2s;">
+          <i class="fas fa-bolt"></i>
+          <span>TON</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="explanation container">
+    <h2>Что считает эта форма</h2>
+    <p>
+      Вы выбираете сеть и токен, которые отдаёте, и сеть и токен, которые хотите получить.
+      Сумма получения берётся из курса CoinGecko и уменьшается на 4.5%.
+    </p>
+    <p>
+      Подтверждение записывает заявку в этой вкладке браузера. Транзакция не создаётся, средства не уходят.
+    </p>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <h2 class="section-title">Как устроен BlockPorter</h2>
+      <div class="features-grid">
+        <article class="feature-card">
+          <i class="fas fa-eye"></i>
+          <h3>Демо без списаний</h3>
+          <p>Кнопка подтверждения не открывает MetaMask и не отправляет токены.</p>
+        </article>
+        <article class="feature-card">
+          <i class="fas fa-chart-line"></i>
+          <h3>Курс CoinGecko</h3>
+          <p>Оценка на момент запроса. Повторный запрос всех цен не чаще раза в минуту.</p>
+        </article>
+        <article class="feature-card">
+          <i class="fas fa-percentage"></i>
+          <h3>Комиссия 4.5%</h3>
+          <p>Она видна в формуле до перехода к подтверждению. Это не плата в сети.</p>
+        </article>
+        <article class="feature-card">
+          <i class="fas fa-network-wired"></i>
+          <h3>Шесть сетей</h3>
+          <p>Ethereum, BNB Smart Chain, Polygon, Optimism, Arbitrum и отдельный адрес TON.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <h2>Посчитать обмен</h2>
+      <a href="dashboard.html" class="btn neon-btn large">Перейти к форме <i class="fas fa-arrow-right"></i></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-logo">
+        <img src="logo.svg" alt="" height="32"/>
+        <p>BlockPorter © 2026</p>
+      </div>
+      <div class="footer-links">
+        <a href="about.html">О проекте</a>
+        <a href="terms.html">Условия</a>
+        <a href="about.html#contact">Контакты</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

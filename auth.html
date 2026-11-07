@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BlockPorter — Вход</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="logo.svg" alt="BlockPorter" height="40"/>
+      </a>
+      <nav class="nav desktop-nav">
+        <a href="index.html">Главная</a>
+        <a href="dashboard.html">Обмен</a>
+        <a href="about.html">О проекте</a>
+        <a href="profile.html">Профиль</a>
+        <span id="auth-status"><a href="auth.html">Войти</a></span>
+      </nav>
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <nav class="mobile-menu" id="mobile-menu">
+      <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
+      <a href="index.html">Главная</a>
+      <a href="dashboard.html">Обмен</a>
+      <a href="about.html">О проекте</a>
+      <a href="profile.html">Профиль</a>
+      <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
+    </nav>
+  </header>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <h2>Вход в BlockPorter</h2>
+      <p class="auth-subtitle">Google сохраняет имя в этом браузере. MetaMask сохраняет адрес.</p>
+
+      <button id="google-login" class="btn auth-btn google-btn" type="button">
+        <i class="fab fa-google"></i> Через Google
+      </button>
+
+      <div class="divider"><span>или</span></div>
+
+      <button id="metamask-login" class="btn auth-btn metamask-btn" type="button">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="" class="wallet-icon" width="24" height="24"/>
+        Через MetaMask
+      </button>
+
+      <p id="auth-error" class="error-message" hidden></p>
+      <p class="hint">Google и MetaMask открываются со страницы http://, а не из файла на диске.</p>
+    </div>
+    <div id="loading" class="spinner" aria-hidden="true"><div class="spinner-circle"></div></div>
+  </main>
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>
