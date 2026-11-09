@@ -4,25 +4,34 @@
     throw new Error((err && err.message) || "Перевод не выполнен");
   }
 
-  async function ensureChain(chain) {
+  async function currentProvider() {
+    if (root.BPWallets && root.BPWallets.provider) {
+      var picked = await root.BPWallets.provider();
+      if (picked) return picked;
+      if (root.BPWallets.hasWallet && root.BPWallets.hasWallet()) throw new Error("Подключение отменено");
+    }
+    return window.ethereum || null;
+  }
+
+  async function ensureChain(eth, chain) {
     var spec = root.BPSwap.chainParams[chain];
-    if (!spec) throw new Error("Эта сеть не открывается в MetaMask");
+    if (!spec) throw new Error("Эта сеть не открывается в кошельке");
     try {
-      await window.ethereum.request({
+      await eth.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: spec.chainId }]
       });
     } catch (err) {
       if (!err || err.code !== 4902) fail(err);
-      await window.ethereum.request({
+      await eth.request({
         method: "wallet_addEthereumChain",
         params: [spec]
       });
     }
   }
 
-  async function decimalsOf(tokenAddress) {
-    var hex = await window.ethereum.request({
+  async function decimalsOf(eth, tokenAddress) {
+    var hex = await eth.request({
       method: "eth_call",
       params: [{ to: tokenAddress, data: "0x313ce567" }, "latest"]
     });
@@ -32,11 +41,12 @@
   }
 
   async function sendInWallet(chain, token, amount, depositAddress) {
-    if (!window.ethereum) throw new Error("MetaMask не найден. Откройте сайт по https, не из файла на диске.");
-    if (!root.BPSwap.canSend(chain, token)) throw new Error("Эту монету нельзя отправить из MetaMask");
+    var eth = await currentProvider();
+    if (!eth) throw new Error("Кошелёк не найден. На телефоне откройте страницу в MetaMask или Trust Wallet.");
+    if (!root.BPSwap.canSend(chain, token)) throw new Error("Эту монету нельзя отправить из кошелька");
     if (!root.BPSwap.isEvmAddress(depositAddress)) throw new Error("Адрес для перевода не задан. Вернитесь к форме и проверьте его.");
-    await ensureChain(chain);
-    var accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    await ensureChain(eth, chain);
+    var accounts = await eth.request({ method: "eth_requestAccounts" });
     var from = accounts[0];
     var native = root.BPSwap.natives[chain] === token;
     var tx = { from: from, value: "0x0" };
@@ -45,13 +55,13 @@
       tx.value = "0x" + root.BPSwap.parseUnits(amount, 18).toString(16);
     } else {
       var contract = root.BPSwap.tokenAddress(chain, token);
-      var decimals = await decimalsOf(contract);
+      var decimals = await decimalsOf(eth, contract);
       var units = root.BPSwap.parseUnits(amount, decimals);
       tx.to = contract;
       tx.data = root.BPSwap.encodeTransfer(depositAddress, units);
     }
     try {
-      var hash = await window.ethereum.request({
+      var hash = await eth.request({
         method: "eth_sendTransaction",
         params: [tx]
       });

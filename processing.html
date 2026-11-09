@@ -16,8 +16,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -30,22 +30,22 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
 
   <main class="swap-main">
     <div class="swap-card glass-effect">
-      <h1 class="swap-title">Заявка</h1>
+      <h1 class="swap-title">Заявка принята</h1>
       <div id="loader" class="loader" role="status" aria-label="Сохраняем"></div>
-      <p id="processing-text" class="processing-message">Записываем заявку…</p>
-      <p id="missing-receipt" class="error-message" hidden>Заявки нет. <a href="dashboard.html">Перейти к обмену</a></p>
+      <p id="processing-text" class="processing-message">Создаём заявку…</p>
+      <p id="missing-receipt" class="error-message" hidden>Заявка не найдена. <a href="dashboard.html">Создать заявку</a></p>
       <div id="result" hidden>
-        <p id="result-lead" class="success-message">Перевод ограничен показанной суммой. Выплата придёт на ваш адрес.</p>
+        <p id="result-lead" class="success-message">Заявка создана. Выплата поступит на указанные реквизиты.</p>
         <div id="result-body" class="swap-details"></div>
-        <a class="btn primary-btn" href="dashboard.html">Новый обмен</a>
+        <a class="btn primary-btn" href="dashboard.html">Новая заявка</a>
       </div>
     </div>
   </main>

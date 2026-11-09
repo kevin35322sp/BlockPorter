@@ -50,28 +50,30 @@
     processingText.hidden = true;
     result.hidden = false;
     if (receipt.mode === "demo") {
-      resultLead.textContent = "Это старая демо-заявка. Перевод по ней не отправлялся.";
+      resultLead.textContent = "Это старая заявка. Оплата по ней не проводилась.";
       resultLead.className = "error-message";
     } else if (receipt.saved === false) {
-      resultLead.textContent = "Перевод подписан и ограничен этой суммой, но заявка не сохранилась. Оставьте хеш у себя и напишите нам. " + (receipt.saveError || "");
+      resultLead.textContent = "Оплата прошла, но заявка не сохранилась. Сохраните хеш и напишите в поддержку. " + (receipt.saveError || "");
       resultLead.className = "error-message";
     } else {
-      resultLead.textContent = "Списана только показанная сумма. Остальные средства на кошельке не затронуты. Выплата придёт на ваш адрес.";
+      resultLead.textContent = "Заявка принята. Списана сумма из заявки, остальные средства на кошельке не затронуты. Выплата поступит на ваши реквизиты.";
     }
-    addRow("Номер:", receipt.id);
-    addRow("Когда:", new Date(receipt.createdAt).toLocaleString("ru-RU"));
-    addRow("Отправили:", receipt.fromAmount + " " + receipt.fromToken + " · " + chainName(receipt.fromChain));
-    addRow("Должны получить:", receipt.toAmount + " " + receipt.toToken + " · " + chainName(receipt.toChain));
-    addRow("Комиссия в формуле:", receipt.fee || "4.5%");
-    if (receipt.depositAddress) addRow("Куда ушли средства:", receipt.depositAddress);
-    if (receipt.senderAddress) addRow("Ваш адрес отправителя:", receipt.senderAddress);
-    if (receipt.payoutAddress) addRow("Куда придёт выплата:", receipt.payoutAddress);
+    addRow("Номер заявки:", receipt.id);
+    addRow("Создана:", new Date(receipt.createdAt).toLocaleString("ru-RU"));
+    addRow("Отдаёте:", receipt.fromAmount + " " + receipt.fromToken + " · " + chainName(receipt.fromChain));
+    addRow("Получаете:", receipt.toAmount + " " + receipt.toToken + " · " + chainName(receipt.toChain));
+    const feeText = receipt.fee || "4.5%";
+    if (feeText !== "0%") addRow("Комиссия:", feeText);
+    if (receipt.bonus && receipt.bonus !== "0%") addRow("Добавлено к курсу:", receipt.bonus);
+    if (receipt.depositAddress) addRow("Адрес оплаты:", receipt.depositAddress);
+    if (receipt.senderAddress) addRow("Адрес отправителя:", receipt.senderAddress);
+    if (receipt.payoutAddress) addRow("Реквизиты получения:", receipt.payoutAddress);
     if (receipt.rateText) addRow("Курс:", receipt.rateText);
     const explorer = receipt.explorerUrl || (window.BPSwap && receipt.txHash ? window.BPSwap.explorerTx(receipt.fromChain, receipt.txHash) : "");
-    if (explorer) addLink("Обозреватель:", explorer, "открыть перевод");
-    else if (receipt.txHash) addRow("Хеш:", receipt.txHash);
-    if (receipt.mode === "demo") addRow("Статус:", "демо, перевод не отправлялся");
-    else if (receipt.saved === false) addRow("Статус:", "перевод есть, заявка в журнале не сохранилась");
-    else addRow("Статус:", "выплата готовится на ваш адрес");
+    if (explorer) addLink("Транзакция:", explorer, "открыть в обозревателе");
+    else if (receipt.txHash) addRow("Хеш оплаты:", receipt.txHash);
+    if (receipt.mode === "demo") addRow("Статус:", "старая заявка, оплата не проводилась");
+    else if (receipt.saved === false) addRow("Статус:", "оплата есть, заявка не записана");
+    else addRow("Статус:", "принята, ожидается выплата");
   }, 600);
 })();

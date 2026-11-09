@@ -23,7 +23,6 @@
   const manualBox = document.getElementById("manual-box");
   const manualHash = document.getElementById("manual-hash");
   const manualSender = document.getElementById("manual-sender");
-  const depositLabel = document.getElementById("deposit-label");
   const depositAddress = document.getElementById("deposit-address");
   const copyDeposit = document.getElementById("copy-deposit");
   const rateInfo = document.getElementById("rate-info");
@@ -58,31 +57,33 @@
   function formProblem() {
     const raw = String(fromAmountInput.value || "").trim();
     if (!raw) return "";
-    if (!/^\d+(\.\d+)?$/.test(raw)) return "Введите сумму больше нуля";
+    if (!/^\d+(\.\d+)?$/.test(raw)) return "Укажите сумму больше нуля";
     const amount = Number(raw);
-    if (!Number.isFinite(amount) || amount <= 0) return "Введите сумму больше нуля";
+    if (!Number.isFinite(amount) || amount <= 0) return "Укажите сумму больше нуля";
     if (amount > 1e12) return "Слишком большая сумма";
     if (fromChainSelect.value === toChainSelect.value && fromTokenSelect.value === toTokenSelect.value) {
-      return "Выберите другую монету или другую сеть";
+      return "Это направление недоступно: выберите другую монету или сеть";
     }
     const mode = payMode();
-    if (mode === "unsupported") return "Из этой сети через сайт отправляются только её монета, USDT и USDC";
+    if (mode === "unsupported") return "В этой сети к обмену доступны её монета, USDT и USDC";
     if (!walletsReady) return walletsError || "Загружаем адрес приёма…";
     if (walletsError) return walletsError;
     const deposit = depositFor(fromChainSelect.value);
     if (!window.BPSwap.isReceiveAddress(fromChainSelect.value, deposit)) {
-      return "Адрес для этой сети ещё готовится. Выберите другую сеть или обновите страницу.";
+      return "Реквизиты для этой сети ещё не заданы. Выберите другую сеть или обновите страницу.";
     }
     if (!window.BPSwap.isReceiveAddress(toChainSelect.value, payoutValue())) {
       return toChainSelect.value === "ton"
-        ? "Для выплаты нужен адрес TON: EQ…, UQ… или 0:…"
-        : "Для выплаты нужен адрес 0x… из 40 знаков";
+        ? "Укажите реквизиты TON: EQ…, UQ… или 0:…"
+        : "Укажите реквизиты для получения: адрес 0x… из 40 знаков";
     }
     if (mode === "manual") {
-      if (!window.BPSwap.isTxHash("ton", manualHash.value.trim())) return "Вставьте хеш перевода в TON";
-      if (!window.BPSwap.isTonAddress(manualSender.value.trim())) return "Вставьте адрес TON, с которого отправили";
+      if (!window.BPSwap.isTxHash("ton", manualHash.value.trim())) return "Укажите хеш оплаты в TON";
+      if (!window.BPSwap.isTonAddress(manualSender.value.trim())) return "Укажите адрес отправителя в TON";
     }
-    if (mode === "wallet" && !window.ethereum) return "Для этой монеты нужен MetaMask";
+    if (mode === "wallet" && window.BPWallets && !window.BPWallets.hasWallet() && !window.BPWallets.isMobile()) {
+      return "Установите MetaMask, Trust Wallet или другой кошелёк";
+    }
     return "";
   }
 
@@ -113,14 +114,14 @@
     tonBox.hidden = !toTon;
     payoutBox.hidden = toTon;
     manualBox.hidden = mode !== "manual";
-    swapButton.textContent = mode === "manual" ? "Я отправил TON" : (mode === "wallet" ? "Перейти к оплате" : "Эта пара недоступна");
+    const openInApp = mode === "wallet" && window.BPWallets && window.BPWallets.isMobile() && !window.BPWallets.hasWallet();
+    swapButton.textContent = mode === "manual" ? "Я оплатил" : (mode === "unsupported" ? "Направление недоступно" : (openInApp ? "Открыть в кошельке" : "Обменять"));
     const deposit = depositFor(fromChainSelect.value);
     const valid = walletsReady && window.BPSwap.isReceiveAddress(fromChainSelect.value, deposit);
-    depositLabel.textContent = "Куда отправить в сети " + chainName(fromChainSelect.value);
-    if (!walletsReady) depositAddress.textContent = walletsError || "Загружаем адрес…";
+    if (!walletsReady) depositAddress.textContent = walletsError || "Загружаем реквизиты…";
     else if (walletsError) depositAddress.textContent = walletsError;
     else if (valid) depositAddress.textContent = deposit;
-    else depositAddress.textContent = "Адрес для этой сети ещё готовится";
+    else depositAddress.textContent = "Реквизиты для этой сети ещё не заданы";
     copyDeposit.hidden = !valid;
   }
 
@@ -165,11 +166,15 @@
 
   async function updateAmount() {
     const my = ++requestId;
+    if (window.BP && window.BP.pricingReady) {
+      try { await window.BP.pricingReady; } catch (err) {}
+    }
+    if (my !== requestId) return;
     syncForm();
     const amount = parseFloat(fromAmountInput.value);
     if (!Number.isFinite(amount) || amount <= 0 || amount > 1e12) {
       toAmountInput.value = "";
-      setRate(formProblem() || "Введите сумму");
+      setRate(formProblem() || "Укажите сумму");
       swapButton.disabled = true;
       return;
     }
@@ -186,11 +191,15 @@
         setRate("Не удалось получить курс");
         return;
       }
-      const toAmount = (amount * fromPrice * 0.955) / toPrice;
+      const pricing = window.BP.pricing || { feeEnabled: true, bonusPercent: 0, multiplier: 0.955 };
+      const toAmount = (amount * fromPrice * pricing.multiplier) / toPrice;
       toAmountInput.value = formatAmount(toAmount);
       const problem = formProblem();
       const perToken = formatAmount(toAmount / amount);
-      const rate = "1 " + fromTokenSelect.value + " ≈ " + perToken + " " + toTokenSelect.value + " после комиссии 4.5%";
+      const notes = [];
+      if (pricing.feeEnabled) notes.push("комиссия включена в курс");
+      if (pricing.bonusPercent > 0) notes.push("к сумме добавлено " + pricing.bonusPercent + "%");
+      const rate = "Курс: 1 " + fromTokenSelect.value + " = " + perToken + " " + toTokenSelect.value + (notes.length ? ". " + notes.join(", ") : "");
       setRate(problem || rate);
       swapButton.disabled = Boolean(problem);
     } catch (err) {
@@ -222,15 +231,14 @@
     walletHint.hidden = false;
   }
 
-  function restoreWallet() {
-    const saved = window.BP.wallet();
-    if (!saved.connected) return;
-    showWallet(saved.address);
-    if (!window.ethereum) return;
-    window.ethereum.request({ method: "eth_accounts" }).then(function (accounts) {
+  function restoreAccounts() {
+    const eth = window.BPWallets && window.BPWallets.active();
+    if (!eth || !eth.request) return;
+    eth.request({ method: "eth_accounts" }).then(function (accounts) {
       if (!accounts || accounts.length === 0) return;
+      const saved = window.BP.wallet();
       const match = accounts.find(function (item) {
-        return item.toLowerCase() === saved.address.toLowerCase();
+        return saved.address && item.toLowerCase() === saved.address.toLowerCase();
       });
       const address = (match || accounts[0]).toLowerCase();
       localStorage.setItem("walletAddress", address);
@@ -240,6 +248,40 @@
     }).catch(function () {});
   }
 
+  function restoreWallet() {
+    const saved = window.BP.wallet();
+    if (saved.connected) showWallet(saved.address);
+    restoreAccounts();
+  }
+
+  function takeQueryDraft() {
+    const params = new URLSearchParams(location.search);
+    const raw = params.get("bp");
+    if (!raw || raw.length > 4000) {
+      if (raw) history.replaceState(null, "", location.pathname);
+      return;
+    }
+    history.replaceState(null, "", location.pathname);
+    let draft = null;
+    try { draft = JSON.parse(raw); } catch (err) { draft = null; }
+    if (!draft || typeof draft !== "object") return;
+    function setSelect(node, value) {
+      if (!value) return;
+      if ([].some.call(node.options, function (option) { return option.value === value; })) node.value = value;
+    }
+    setSelect(fromChainSelect, draft.fromChain);
+    setSelect(toChainSelect, draft.toChain);
+    setSelect(fromTokenSelect, draft.fromToken);
+    setSelect(toTokenSelect, draft.toToken);
+    if (draft.fromAmount) fromAmountInput.value = String(draft.fromAmount);
+    if (draft.payoutAddress) {
+      if (toChainSelect.value === "ton") tonInput.value = String(draft.payoutAddress);
+      else payoutInput.value = String(draft.payoutAddress);
+    }
+    if (draft.txHash) manualHash.value = String(draft.txHash);
+    if (draft.senderAddress) manualSender.value = String(draft.senderAddress);
+  }
+
   async function refreshWallets() {
     try {
       const ledger = await import("./ledger.js");
@@ -247,23 +289,17 @@
       walletsError = "";
     } catch (err) {
       wallets = {};
-      walletsError = "Адрес обмена сейчас не открылся. Обновите страницу через минуту.";
+      walletsError = "Реквизиты обмена сейчас не открылись. Обновите страницу через минуту.";
     }
     walletsReady = true;
     syncForm();
   }
 
   document.getElementById("connect-wallet").addEventListener("click", async function () {
-    if (!window.ethereum) {
-      window.alert("MetaMask не найден. Откройте сайт по http://localhost и проверьте расширение.");
-      return;
-    }
     try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const address = accounts[0].toLowerCase();
-      localStorage.setItem("walletAddress", address);
-      localStorage.setItem("walletConnected", "true");
-      showWallet(address);
+      const address = await window.BPWallets.connectInteractive();
+      if (!address) return;
+      showWallet(address.toLowerCase());
       window.BP.refreshAuth();
     } catch (err) {
       const message = err && err.code === 4001 ? "Подключение отменено" : (err && err.message) || "Не удалось подключить кошелёк";
@@ -318,6 +354,15 @@
     else hideWallet();
   });
 
+  document.addEventListener("bp-pricing", function () {
+    if (fromAmountInput.value) updateAmount();
+  });
+
+  document.addEventListener("bp-wallets", function () {
+    restoreAccounts();
+    if (fromAmountInput.value) updateAmount();
+  });
+
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
     if (swapButton.disabled) return;
@@ -344,12 +389,26 @@
       payMode: mode,
       wallet: window.BP.wallet().address || "",
       rateText: rateInfo.textContent,
-      fee: "4.5%"
+      fee: window.BP.pricing && window.BP.pricing.feeEnabled === false ? "0%" : "4.5%",
+      bonus: window.BP.pricing && window.BP.pricing.bonusPercent > 0 ? window.BP.pricing.bonusPercent + "%" : "0%"
     };
+    if (mode === "wallet") await window.BPWallets.ready();
+    if (mode === "wallet" && !window.BPWallets.hasWallet()) {
+      if (window.BPWallets.isMobile()) {
+        const reopen = location.origin + location.pathname + "?bp=" + encodeURIComponent(JSON.stringify(draft));
+        await window.BPWallets.showOpenInWallet(reopen);
+        swapButton.disabled = false;
+        return;
+      }
+      setRate("Установите MetaMask, Trust Wallet или другой кошелёк");
+      swapButton.disabled = true;
+      return;
+    }
     sessionStorage.setItem("bpSwapDraft", JSON.stringify(draft));
     location.href = "confirmation.html";
   });
 
+  takeQueryDraft();
   syncForm();
   restoreWallet();
   refreshWallets().then(updateAmount);

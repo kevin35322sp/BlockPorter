@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — Условия обмена</title>
+  <title>BlockPorter — Правила обмена</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
@@ -16,8 +16,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -30,21 +30,21 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
 
   <main class="swap-main">
     <div class="swap-card glass-effect">
-      <h1 class="swap-title">Условия обмена</h1>
+      <h1 class="swap-title">Правила обмена</h1>
       <div class="terms-copy">
-        <p>Ваши ключи остаются у вас. BlockPorter не просит секретную фразу и не получает доступ к кошельку.</p>
-        <p>Подпись подтверждает один перевод: монету и сумму, которые вы видите до нажатия кнопки. Адрес тоже показан заранее. Другие монеты на кошельке этот перевод не трогает, разрешения забирать их сайт не запрашивает.</p>
-        <p>Сумма в поле «Отправляете» уходит целиком. Сумма «Получаете» уже уменьшена на 4.5% и приходит на адрес, который вы указали сами. Плата сети за перевод списывается отдельно и в эти 4.5% не входит.</p>
-        <p>Для TON вы отправляете монету из своего кошелька TON и вставляете хеш. На сайт попадает только хеш и адрес отправителя, не ключ.</p>
-        <p>Перед подписью проверьте сеть, монету, сумму и свой адрес для выплаты. После вашего перевода BlockPorter отправляет выплату на этот адрес.</p>
+        <p>Заявка создаётся на сайте: вы выбираете направление, сумму и реквизиты для получения. Секретная фраза и ключи кошелька не запрашиваются.</p>
+        <p>Оплата заявки — один перевод монеты и суммы, которые указаны до подтверждения. Адрес для оплаты показан заранее. Остальные монеты на кошельке этот перевод не затрагивает.</p>
+        <p>Сумма в поле «Отдаёте» списывается целиком. <span data-pricing="fee">Сумма «К получению» уже включает комиссию 4.5% и отправляется на реквизиты из заявки. Плата сети оплачивается отдельно и в эти 4.5% не входит.</span><span data-pricing="nofee" hidden>Сумма «К получению» считается по курсу и отправляется на реквизиты из заявки. Плата сети оплачивается отдельно.</span></p>
+        <p>Для TON оплату проводите из своего кошелька и указываете хеш перевода и адрес отправителя. На сайт попадают только эти данные, не ключ.</p>
+        <p>Перед оплатой проверьте сеть, монету, сумму и реквизиты получения. После поступления оплаты выплата отправляется на этот адрес.</p>
       </div>
       <a href="dashboard.html" class="btn primary-btn">Вернуться к обмену</a>
     </div>

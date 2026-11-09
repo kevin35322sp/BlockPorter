@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — Подтверждение обмена</title>
+  <title>BlockPorter — Проверка заявки</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
@@ -16,8 +16,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -30,41 +30,42 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
 
   <main class="swap-main">
     <div class="swap-card glass-effect">
-      <h1 class="swap-title">Подтверждение</h1>
-      <p class="demo-banner">Проверьте монету, сумму и адрес. Подпись отправит только это и не откроет доступ к остальным средствам. Секретная фраза не нужна. Выплата придёт на ваш адрес, плата сети спишется отдельно.</p>
+      <h1 class="swap-title">Проверка заявки</h1>
+      <p class="demo-banner">Сверьте направление, сумму и реквизиты. Оплата спишет только указанную монету и сумму. Секретная фраза не нужна. Выплата уйдёт на ваши реквизиты, плата сети оплачивается отдельно.</p>
 
-      <p id="missing-draft" class="error-message" hidden>Нет данных обмена. Сначала заполните форму.</p>
+      <p id="missing-draft" class="error-message" hidden>Заявка не заполнена. <a href="dashboard.html">Вернуться к обмену</a></p>
 
       <div id="swap-details" class="swap-details">
-        <p><strong>Сеть отправления:</strong> <span id="from-chain-display">—</span></p>
-        <p><strong>Сеть получения:</strong> <span id="to-chain-display">—</span></p>
-        <p><strong>Токен отправления:</strong> <span id="from-token-display">—</span></p>
-        <p><strong>Токен получения:</strong> <span id="to-token-display">—</span></p>
-        <p><strong>С вашего кошелька уйдёт:</strong> <span id="from-amount-display">—</span></p>
-        <p><strong>Вы получите:</strong> <span id="to-amount-display">—</span></p>
-        <p><strong>Комиссия сервиса:</strong> <span id="fee-display">4.5%</span></p>
-        <p><strong>Куда уйдут средства:</strong> <span id="deposit-display" class="mono">—</span></p>
-        <p><strong>Ваш адрес для выплаты:</strong> <span id="payout-display" class="mono">—</span></p>
-        <p id="sender-row" hidden><strong>Ваш адрес отправителя:</strong> <span id="sender-display" class="mono"></span></p>
-        <p id="hash-row" hidden><strong>Хеш перевода:</strong> <span id="hash-display" class="mono"></span></p>
+        <p><strong>Отдаёте из сети:</strong> <span id="from-chain-display">—</span></p>
+        <p><strong>Получаете в сети:</strong> <span id="to-chain-display">—</span></p>
+        <p><strong>Отдаёте:</strong> <span id="from-token-display">—</span></p>
+        <p><strong>Получаете:</strong> <span id="to-token-display">—</span></p>
+        <p><strong>Сумма к оплате:</strong> <span id="from-amount-display">—</span></p>
+        <p><strong>Сумма к получению:</strong> <span id="to-amount-display">—</span></p>
+        <p id="fee-row"><strong>Комиссия:</strong> <span id="fee-display">4.5%</span></p>
+        <p id="bonus-row" hidden><strong>Добавлено к курсу:</strong> <span id="bonus-display"></span></p>
+        <p><strong>Адрес для оплаты:</strong> <span id="deposit-display" class="mono">—</span></p>
+        <p><strong>Реквизиты для получения:</strong> <span id="payout-display" class="mono">—</span></p>
+        <p id="sender-row" hidden><strong>Адрес отправителя:</strong> <span id="sender-display" class="mono"></span></p>
+        <p id="hash-row" hidden><strong>Хеш оплаты:</strong> <span id="hash-display" class="mono"></span></p>
       </div>
 
       <div class="terms-section">
         <input type="checkbox" id="terms-checkbox">
-        <label for="terms-checkbox">Я прочитал <a href="terms.html" target="_blank" rel="noopener">условия обмена</a></label>
+        <label for="terms-checkbox">Согласен с <a href="terms.html" target="_blank" rel="noopener">правилами обмена</a></label>
       </div>
 
-      <button id="confirm-swap" class="btn primary-btn" type="button" disabled>Подписать перевод</button>
+      <button id="confirm-swap" class="btn primary-btn" type="button" disabled>Оплатить заявку</button>
       <p id="error-message" class="error-message" hidden></p>
-      <a class="back-link" href="dashboard.html">Изменить заявку</a>
+      <a class="back-link" href="dashboard.html">Изменить данные</a>
     </div>
   </main>
   <script src="app.js"></script>

@@ -16,19 +16,16 @@
     if (location.protocol === "file:") {
       return "Страница открыта как файл. Запустите локальный сервер и откройте http://localhost.";
     }
-    return (err && err.message) || "Не удалось подключить MetaMask";
+    return (err && err.message) || "Не удалось подключить кошелёк";
   }
 
   document.getElementById("metamask-login").addEventListener("click", async function () {
     showError("");
-    if (!window.ethereum) {
-      showError("MetaMask не найден. Откройте сайт по http://localhost, не двойным щелчком по файлу.");
-      return;
-    }
     showLoading(true);
     try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      localStorage.setItem("walletAddress", accounts[0].toLowerCase());
+      const address = await window.BPWallets.connectInteractive();
+      if (!address) return;
+      localStorage.setItem("walletAddress", address.toLowerCase());
       localStorage.setItem("walletConnected", "true");
       location.href = "profile.html";
     } catch (err) {
@@ -54,7 +51,7 @@
       localStorage.setItem("authLabel", user.email || user.displayName || "Google");
       location.href = "profile.html";
     } catch (err) {
-      showError((err && err.message) || "Не удалось войти через Google");
+      showError(window.BP.googleError(err));
     } finally {
       showLoading(false);
     }
@@ -73,6 +70,6 @@
       });
     })
     .catch(function () {
-      /* Без сети или вне http Firebase просто не подключается. MetaMask остаётся на странице. */
+      /* Без сети или вне http Firebase просто не подключается. Вход через кошелёк остаётся на странице. */
     });
 })();

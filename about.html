@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — О проекте</title>
+  <title>BlockPorter — О сервисе</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,8 +17,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -31,8 +31,8 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
@@ -41,31 +41,31 @@
     <section class="hero-about">
       <div class="container">
         <h1>BlockPorter</h1>
-        <p class="hero-subtitle">Обмен, в котором ключи остаются у вас</p>
+        <p class="hero-subtitle">Обменный сервис: заявка, оплата и выплата на ваши реквизиты</p>
       </div>
     </section>
 
     <section class="about-section container">
       <div class="about-grid">
         <article class="about-card">
-          <h2>Как это защищает вас</h2>
+          <h2>Как создать заявку</h2>
           <p>
-            Вы выбираете монету и сеть, которые отправляете, и монету с сетью, которые хотите получить.
-            До подписи на экране есть сумма и адрес. Уходит только этот перевод.
+            Выберите, что отдаёте и что получаете, и укажите сумму.
+            Курс сразу покажет сумму к получению. Реквизиты для выплаты вводите сами.
           </p>
           <p>
-            Секретная фраза не нужна. MetaMask не даёт сайту право забирать токены потом.
-            Остальной баланс кошелька остаётся на месте. Выплата приходит на адрес, который указали вы.
+            Оплата заявки — обычный перевод из кошелька. Секретная фраза не запрашивается,
+            другие монеты на кошельке не затрагиваются. После оплаты выплата уходит на указанный адрес.
           </p>
         </article>
         <article class="about-card">
-          <h2>Что вы контролируете</h2>
+          <h2>Что входит в обмен</h2>
           <ul class="advantages">
-            <li><span class="icon"><i class="fas fa-lock"></i></span> Ключи и секретная фраза остаются в вашем кошельке</li>
-            <li><span class="icon"><i class="fas fa-shield-halved"></i></span> Списывается только выбранная монета и показанная сумма</li>
-            <li><span class="icon"><i class="fas fa-ban"></i></span> Нет разрешения трогать остальные токены</li>
-            <li><span class="icon"><i class="fas fa-percentage"></i></span> Сумма к получению уже с комиссией 4.5%</li>
-            <li><span class="icon"><i class="fas fa-wallet"></i></span> Адрес выплаты вводите вы, в том числе для TON</li>
+            <li><span class="icon"><i class="fas fa-lock"></i></span> Секретная фраза и ключи остаются в вашем кошельке</li>
+            <li><span class="icon"><i class="fas fa-shield-halved"></i></span> Списывается только монета и сумма из заявки</li>
+            <li><span class="icon"><i class="fas fa-ban"></i></span> Доступ к остальным токенам не запрашивается</li>
+            <li data-pricing="fee"><span class="icon"><i class="fas fa-percentage"></i></span> Комиссия 4.5% включена в курс</li>
+            <li><span class="icon"><i class="fas fa-wallet"></i></span> Реквизиты получения указываете вы, в том числе для TON</li>
           </ul>
         </article>
       </div>
@@ -73,8 +73,8 @@
 
     <section class="contact container" id="contact">
       <div class="contact-card">
-        <h2>Напишите нам</h2>
-        <p>Если нужна помощь с обменом, напишите нам. Секретную фразу и пароль кошелька в сообщение не вставляйте.</p>
+        <h2>Поддержка</h2>
+        <p>Если вопрос по заявке, напишите нам и укажите номер. Секретную фразу и пароль кошелька в сообщение не вставляйте.</p>
         <form id="contact-form" class="contact-form">
           <div class="form-group">
             <i class="fas fa-user"></i>
@@ -88,7 +88,7 @@
             <i class="fas fa-comment-alt"></i>
             <textarea name="message" placeholder="Сообщение" rows="5" required></textarea>
           </div>
-          <button type="submit" class="btn submit-btn">Отправить сообщение</button>
+          <button type="submit" class="btn submit-btn">Отправить</button>
         </form>
         <p id="form-status" class="status-message" role="status"></p>
       </div>

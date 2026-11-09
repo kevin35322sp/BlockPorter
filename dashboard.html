@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — Обмен</title>
+  <title>BlockPorter — Обмен криптовалют</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,8 +17,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -31,30 +31,30 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
 
   <main class="swap-main">
     <div class="swap-card glass-effect">
-      <h1 class="swap-title">Кроссчейн обмен</h1>
-      <p class="demo-banner">Средства под вашим контролем: уйдёт только выбранная монета и показанная сумма. Секретную фразу сайт не спрашивает, остальные активы не трогает. Комиссия 4.5% уже учтена в сумме получения.</p>
+      <h1 class="swap-title">Обмен</h1>
+      <p class="demo-banner">Выберите направление и сумму. К оплате уйдёт только эта монета и эта сумма, секретная фраза не нужна. <span data-pricing="fee">Комиссия 4.5% включена в курс.</span></p>
 
       <div class="wallet-section">
-        <button id="connect-wallet" class="btn neon-btn" type="button">Подключить MetaMask</button>
+        <button id="connect-wallet" class="btn neon-btn" type="button">Подключить кошелёк для оплаты</button>
         <div id="wallet-info" class="wallet-info" style="display:none;">
           <span id="wallet-status" class="wallet-status">Подключено</span>
           <button id="disconnect" class="btn disconnect-btn" type="button">Отключить</button>
         </div>
       </div>
-      <p id="wallet-hint" class="hint">MetaMask нужен только чтобы подтвердить один перевод ETH, BNB, MATIC, USDT или USDC. Ключ из кошелька не уходит. TON вы отправляете сами и вставляете хеш сюда.</p>
+      <p id="wallet-hint" class="hint">Кошелёк нужен, чтобы оплатить заявку: ETH, BNB, MATIC, USDT или USDC. На телефоне откройте страницу в MetaMask или Trust Wallet. TON отправляете сами и указываете хеш в заявке.</p>
 
       <form id="swap-form" class="swap-form">
         <div class="network-row">
           <div class="network-group">
-            <label for="from-chain">Сеть отдаёте</label>
+            <label for="from-chain">Отдаёте из сети</label>
             <div class="custom-select">
               <select id="from-chain" class="chain-selector">
                 <option value="ethereum">Ethereum</option>
@@ -69,7 +69,7 @@
           </div>
           <div class="swap-arrow-right" aria-hidden="true"><i class="fas fa-arrow-right"></i></div>
           <div class="network-group">
-            <label for="to-chain">Сеть получаете</label>
+            <label for="to-chain">Получаете в сети</label>
             <div class="custom-select">
               <select id="to-chain" class="chain-selector">
                 <option value="bsc">BNB Smart Chain</option>
@@ -85,15 +85,14 @@
         </div>
 
         <div id="deposit-box" class="deposit-box">
-          <p id="deposit-label" class="address-label">Куда отправить</p>
-          <p id="deposit-address" class="mono">Загружаем адрес…</p>
+          <p id="deposit-address" class="mono">Загружаем реквизиты…</p>
           <button id="copy-deposit" class="btn copy-btn" type="button" hidden>Копировать адрес</button>
         </div>
 
         <div class="swap-box from-box">
-          <label class="swap-label" for="from-amount">Отправляете</label>
+          <label class="swap-label" for="from-amount">Отдаёте</label>
           <div class="input-row">
-            <input type="number" id="from-amount" placeholder="0.0" step="any" min="0" inputmode="decimal"/>
+            <input type="number" id="from-amount" placeholder="0.00" step="any" min="0" inputmode="decimal"/>
             <select id="from-token" class="token-select" aria-label="Токен отдаёте">
               <option value="ETH" selected>ETH</option>
               <option value="USDC">USDC</option>
@@ -111,9 +110,9 @@
         </button>
 
         <div class="swap-box to-box">
-          <label class="swap-label" for="to-amount">Получаете примерно</label>
+          <label class="swap-label" for="to-amount">Получаете</label>
           <div class="input-row">
-            <input type="text" id="to-amount" placeholder="0.0" readonly/>
+            <input type="text" id="to-amount" placeholder="0.00" readonly/>
             <select id="to-token" class="token-select" aria-label="Токен получаете">
               <option value="USDC" selected>USDC</option>
               <option value="USDT">USDT</option>
@@ -127,26 +126,26 @@
         </div>
 
         <div id="payout-container" class="ton-address-container">
-          <label for="payout-address">Ваш адрес для выплаты</label>
+          <label for="payout-address">Реквизиты для получения</label>
           <input type="text" id="payout-address" class="field-input" placeholder="0x…" autocomplete="off" spellcheck="false"/>
         </div>
 
         <div id="ton-address-container" class="ton-address-container" hidden>
-          <label for="ton-address">Ваш адрес TON для выплаты</label>
+          <label for="ton-address">Реквизиты TON для получения</label>
           <input type="text" id="ton-address" placeholder="EQ…, UQ… или 0:…" autocomplete="off" spellcheck="false"/>
         </div>
 
         <div id="manual-box" class="ton-address-container" hidden>
-          <p class="hint">Отправьте TON на адрес выше из своего кошелька. Затем вставьте хеш и адрес отправителя. Ключ TON на сайт не попадает.</p>
-          <label for="manual-hash">Хеш перевода</label>
+          <p class="hint">Отправьте TON на адрес в блоке выше. Затем укажите хеш оплаты и адрес отправителя. Ключ кошелька на сайт не передаётся.</p>
+          <label for="manual-hash">Хеш оплаты</label>
           <input type="text" id="manual-hash" class="field-input" placeholder="Хеш из кошелька TON" autocomplete="off" spellcheck="false"/>
-          <label for="manual-sender">Адрес, с которого отправили</label>
+          <label for="manual-sender">Адрес отправителя</label>
           <input type="text" id="manual-sender" class="field-input" placeholder="EQ…, UQ… или 0:…" autocomplete="off" spellcheck="false"/>
         </div>
 
-        <button id="swap-button" class="btn primary-btn" type="submit" disabled>Перейти к оплате</button>
-        <p class="commission-info">Комиссия 4.5% уже в сумме, которую вы получите. Плата сети — отдельно.</p>
-        <p id="rate-info" class="rate-info">Введите сумму</p>
+        <button id="swap-button" class="btn primary-btn" type="submit" disabled>Обменять</button>
+        <p class="commission-info"><span data-pricing="fee">Комиссия 4.5% включена в курс. </span><span data-pricing="bonus" hidden></span>Плата сети оплачивается отдельно.</p>
+        <p id="rate-info" class="rate-info">Укажите сумму</p>
       </form>
     </div>
   </main>

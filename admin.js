@@ -4,7 +4,9 @@
   const errorNode = document.getElementById("admin-error");
   const loginBtn = document.getElementById("admin-login");
   const form = document.getElementById("wallets-form");
+  const pricingForm = document.getElementById("pricing-form");
   const walletStatus = document.getElementById("wallet-status-line");
+  const pricingStatus = document.getElementById("pricing-status");
   const ordersNode = document.getElementById("orders");
   const emptyNode = document.getElementById("orders-empty");
   const chains = ["ethereum", "bsc", "polygon", "optimism", "arbitrum", "ton"];
@@ -83,6 +85,7 @@
       card.appendChild(el("p", "order-time", when(row.createdAt)));
       card.appendChild(el("p", "", "Перевели: " + (row.fromAmount || "—") + " " + (row.fromToken || "") + " · " + chainName(row.fromChain)));
       card.appendChild(el("p", "order-due", "Нужно отправить: " + (row.toAmount || "—") + " " + (row.toToken || "") + " · " + chainName(row.toChain)));
+      if (row.bonus && row.bonus !== "0%") card.appendChild(el("p", "", "Доплата сверху: " + row.bonus));
       card.appendChild(addressRow("Откуда пришло", row.senderAddress || ""));
       card.appendChild(addressRow("Куда отправить выплату", row.payoutAddress || ""));
       card.appendChild(addressRow("Куда пришло", row.depositAddress || ""));
@@ -146,6 +149,13 @@
         const input = document.getElementById("wallet-" + chain);
         input.value = stored && stored[chain] ? String(stored[chain]) : "";
       });
+      try {
+        const pricing = await ledgerApi.getPricing();
+        document.getElementById("fee-enabled").checked = pricing.feeEnabled;
+        document.getElementById("bonus-percent").value = pricing.bonusPercent ? String(pricing.bonusPercent) : "";
+      } catch (err) {
+        pricingStatus.textContent = "Условия комиссии не прочитались. Вставьте обновлённые правила из файла firestore.rules.";
+      }
       stopWatch = await ledgerApi.watchOrders(renderOrders, function (err) {
         emptyNode.hidden = false;
         emptyNode.textContent = (err && err.message) || "Не удалось читать заявки";
@@ -182,7 +192,7 @@
       localStorage.setItem("authLabel", email);
       await openDesk(email);
     } catch (err) {
-      showError((err && err.message) || "Не удалось войти");
+      showError(window.BP.googleError(err));
     } finally {
       loginBtn.disabled = false;
     }
@@ -216,6 +226,45 @@
       walletStatus.textContent = "Адреса сохранены. Их увидят на странице обмена.";
     } catch (err) {
       walletStatus.textContent = (err && err.message) || "Не удалось сохранить адреса";
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  function readBonus() {
+    const text = document.getElementById("bonus-percent").value.trim().replace(",", ".");
+    if (!text) return 0;
+    if (!/^\d+(\.\d{1,2})?$/.test(text)) return null;
+    const value = Number(text);
+    if (!Number.isFinite(value) || value < 0 || value > 100) return null;
+    return value;
+  }
+
+  pricingForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    pricingStatus.textContent = "";
+    const bonus = readBonus();
+    if (bonus == null) {
+      pricingStatus.textContent = "Доплата — число от 0 до 100, не больше двух знаков после запятой.";
+      return;
+    }
+    const button = document.getElementById("save-pricing");
+    button.disabled = true;
+    try {
+      const saved = await ledgerApi.savePricing({
+        feeEnabled: document.getElementById("fee-enabled").checked,
+        bonusPercent: bonus
+      });
+      document.getElementById("bonus-percent").value = saved.bonusPercent ? String(saved.bonusPercent) : "";
+      pricingStatus.textContent = saved.feeEnabled
+        ? "Сохранено. Комиссия 4.5%" + (saved.bonusPercent ? ", сверху доплата " + saved.bonusPercent + "%." : ", без доплаты.")
+        : "Сохранено. Комиссия выключена" + (saved.bonusPercent ? ", сверху доплата " + saved.bonusPercent + "%." : ".");
+    } catch (err) {
+      var code = String((err && err.code) || "");
+      var message = String((err && err.message) || "");
+      pricingStatus.textContent = code.indexOf("permission") !== -1 || /permission/i.test(message)
+        ? "Firestore отклонил запись. Вставьте обновлённые правила из файла firestore.rules."
+        : (message || "Не удалось сохранить условия");
     } finally {
       button.disabled = false;
     }

@@ -54,7 +54,13 @@
   setText("to-token-display", draft.toToken);
   setText("from-amount-display", draft.fromAmount + " " + draft.fromToken);
   setText("to-amount-display", draft.toAmount + " " + draft.toToken);
-  setText("fee-display", draft.fee || "4.5%");
+  const feeText = draft.fee || "4.5%";
+  if (feeText === "0%") document.getElementById("fee-row").hidden = true;
+  else setText("fee-display", feeText);
+  if (draft.bonus && draft.bonus !== "0%") {
+    document.getElementById("bonus-row").hidden = false;
+    setText("bonus-display", draft.bonus);
+  }
   setText("deposit-display", draft.depositAddress);
   setText("payout-display", draft.payoutAddress);
   if (draft.payMode === "manual") {
@@ -62,9 +68,9 @@
     hashRow.hidden = false;
     setText("sender-display", draft.senderAddress);
     setText("hash-display", draft.txHash);
-    confirmBtn.textContent = "Подтвердить отправку TON";
+    confirmBtn.textContent = "Подтвердить оплату TON";
   } else {
-    confirmBtn.textContent = "Подписать перевод " + draft.fromAmount + " " + draft.fromToken;
+    confirmBtn.textContent = "Оплатить " + draft.fromAmount + " " + draft.fromToken;
   }
 
   terms.addEventListener("change", function () {
@@ -101,6 +107,7 @@
         depositAddress: deposit,
         txHash: String(hash),
         fee: draft.fee || "4.5%",
+        bonus: draft.bonus || "0%",
         rateText: draft.rateText || "",
         payMode: draft.payMode,
         explorerUrl: window.BPSwap.explorerTx(draft.fromChain, hash)

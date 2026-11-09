@@ -1,11 +1,10 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyA0kOJ3JTQZgwoS08OEzQ2yxJVX7GSwKr8",
-  authDomain: "blockporter-3fc3c.firebaseapp.com",
-  projectId: "blockporter-3fc3c",
-  storageBucket: "blockporter-3fc3c.firebasestorage.app",
-  messagingSenderId: "271743114338",
-  appId: "1:271743114338:web:081f67522c3f6dbfb8853b",
-  measurementId: "G-BHZTZL2WVT"
+  apiKey: "AIzaSyBHWbr9rlbKUiTY6qEYpLEqfy07W1b3Yqs",
+  authDomain: "blockporter-1.firebaseapp.com",
+  projectId: "blockporter-1",
+  storageBucket: "blockporter-1.firebasestorage.app",
+  messagingSenderId: "873745031112",
+  appId: "1:873745031112:web:0dd56950729a4d4f532afd"
 };
 
 export async function loadDb() {

@@ -51,13 +51,10 @@
   }
 
   async function connectWallet() {
-    if (!window.ethereum) {
-      window.alert("MetaMask не найден. Откройте сайт по http://localhost и разрешите расширение на этом адресе.");
-      return;
-    }
     try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      localStorage.setItem("walletAddress", accounts[0].toLowerCase());
+      const address = await window.BPWallets.connectInteractive();
+      if (!address) return;
+      localStorage.setItem("walletAddress", address.toLowerCase());
       localStorage.setItem("walletConnected", "true");
       render();
       window.BP.refreshAuth();
@@ -69,13 +66,16 @@
 
   async function readBalance(address, target) {
     target.textContent = "Читаем баланс сети…";
-    if (!window.ethereum) {
-      target.textContent = "Баланс читается в браузере, где установлен MetaMask.";
+    const eth = window.BPWallets.active();
+    if (!eth) {
+      target.textContent = window.BPWallets.isMobile()
+        ? "Баланс читается внутри MetaMask или Trust Wallet."
+        : "Баланс читается в браузере, где установлен кошелёк.";
       return;
     }
     try {
-      const chainId = await window.ethereum.request({ method: "eth_chainId" });
-      const hex = await window.ethereum.request({
+      const chainId = await eth.request({ method: "eth_chainId" });
+      const hex = await eth.request({
         method: "eth_getBalance",
         params: [address, "latest"]
       });
@@ -93,14 +93,14 @@
     bodyEl.replaceChildren();
 
     if (!saved.connected && provider !== "google") {
-      statusEl.textContent = "Нет входа";
+      statusEl.textContent = "Вы не вошли";
       statusEl.classList.remove("connected");
       const prompt = el("div", "connect-prompt");
-      prompt.append(el("p", null, "Войдите через Google или подключите кошелёк. Секретная фраза не нужна: здесь баланс только читается, перевод не запускается."));
+      prompt.append(el("p", null, "Войдите через Google или подключите кошелёк. Секретная фраза не нужна: в кабинете виден адрес и баланс сети, заявка отсюда не оплачивается."));
       const actions = el("div", "profile-actions");
       const login = el("a", "btn neon-btn", "Войти");
       login.href = "auth.html";
-      const connect = actionButton("btn neon-btn", "Подключить MetaMask");
+      const connect = actionButton("btn neon-btn", "Подключить кошелёк");
       connect.id = "connect-wallet";
       connect.addEventListener("click", connectWallet);
       actions.append(login, connect);
@@ -112,13 +112,13 @@
     statusEl.classList.add("connected");
     if (saved.connected && provider === "google") statusEl.textContent = "Google и кошелёк";
     else if (saved.connected) statusEl.textContent = "Кошелёк подключён";
-    else statusEl.textContent = "Вход через Google";
+    else statusEl.textContent = "Вход выполнен";
 
     if (provider === "google" && label) bodyEl.append(el("p", "hint", label));
 
     if (saved.connected) {
       const block = el("div", "address-block");
-      block.append(el("div", "address-label", "Адрес"));
+      block.append(el("div", "address-label", "Адрес кошелька"));
       block.append(el("div", "address-value", saved.address));
       const balance = el("div", "balance-line", "");
       block.append(balance);
@@ -131,7 +131,7 @@
       bodyEl.append(block);
       readBalance(saved.address, balance);
     } else {
-      const connect = actionButton("btn neon-btn", "Подключить MetaMask");
+      const connect = actionButton("btn neon-btn", "Подключить кошелёк");
       connect.id = "connect-wallet";
       connect.addEventListener("click", connectWallet);
       bodyEl.append(connect);

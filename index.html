@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — Кроссчейн обмен</title>
+  <title>BlockPorter — Обмен криптовалют</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,8 +17,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -31,8 +31,8 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
@@ -41,16 +41,16 @@
     <div class="container hero-layout">
       <div class="hero-content">
         <h1 class="hero-title">
-          <span class="gradient-text">Кроссчейн-обмен</span><br>
-          в одном окне
+          <span class="gradient-text">Обмен криптовалют</span><br>
+          ETH, USDT, TON и другие
         </h1>
         <p class="hero-subtitle">
-          Выберите, что отправить и что получить. Секретная фраза остаётся у вас:
-          кошелёк списывает только ту монету и ту сумму, которые вы видите на экране.
+          Выберите направление, укажите сумму и реквизиты для получения.
+          Сумма к получению считается сразу. Оплата заявки — один перевод той монеты и суммы, которые видите на экране.
         </p>
         <div class="hero-buttons">
           <a href="dashboard.html" class="btn neon-btn large">Начать обмен <i class="fas fa-arrow-right"></i></a>
-          <a href="about.html" class="btn outline-btn large">Узнать больше</a>
+          <a href="about.html" class="btn outline-btn large">Как это работает</a>
         </div>
       </div>
       <div class="floating-elements" aria-hidden="true">
@@ -71,40 +71,40 @@
   </section>
 
   <section class="explanation container">
-    <h2>Ваши средства остаются под вашим контролем</h2>
+    <h2>Как проходит обмен</h2>
     <p>
-      Сайт не просит ключи и не получает доступ к кошельку. Перед подписью вы видите монету, сумму и адрес.
-      Подтверждение в MetaMask — это один обычный перевод. Остальные активы на кошельке не затрагиваются.
+      Укажите, что отдаёте и что хотите получить. Курс подставится в сумму к получению.
+      Затем проверьте заявку и оплатите её переводом из своего кошелька: спишется только выбранная монета и показанная сумма.
     </p>
     <p>
-      Сумма к получению уже включает комиссию 4.5% и считается по курсу CoinGecko.
-      Выплата приходит на адрес, который указываете вы сами. Плата сети за перевод списывается отдельно.
+      <span data-pricing="fee">Комиссия 4.5% уже включена в курс.</span><span data-pricing="nofee" hidden>Сумма к получению считается по текущему курсу.</span>
+      Выплата уходит на реквизиты, которые вы указали в заявке. Плата сети оплачивается отдельно.
     </p>
   </section>
 
   <section class="features-section">
     <div class="container">
-      <h2 class="section-title">Почему обмен безопасен для вас</h2>
+      <h2 class="section-title">Условия обмена</h2>
       <div class="features-grid">
         <article class="feature-card">
-          <i class="fas fa-shield-halved"></i>
-          <h3>Ключи только у вас</h3>
-          <p>Секретную фразу и пароль кошелька сайт не спрашивает. Подпись проходит в MetaMask, доступ к остальным монетам не выдаётся.</p>
+          <i class="fas fa-right-left"></i>
+          <h3>Направление</h3>
+          <p>Отдаёте ETH, USDT, USDC, BNB, MATIC или TON и получаете другую монету. Сеть выбирается отдельно для отдачи и для получения.</p>
         </article>
         <article class="feature-card">
           <i class="fas fa-eye"></i>
-          <h3>Сумма видна до перевода</h3>
-          <p>Уходит ровно выбранная монета и ровно показанная сумма. Скрытого списания и разрешения «на все токены» нет.</p>
+          <h3>Сумма в заявке</h3>
+          <p>До оплаты видно, сколько уйдёт и сколько придёт. Другие монеты на кошельке этот перевод не трогает, секретная фраза не нужна.</p>
         </article>
         <article class="feature-card">
           <i class="fas fa-percentage"></i>
-          <h3>Честная сумма получения</h3>
-          <p>Комиссия 4.5% уже вычтена из того, что вы получите. Курс берётся у CoinGecko на момент запроса.</p>
+          <h3>Курс</h3>
+          <p><span data-pricing="fee">Комиссия 4.5% включена в курс. </span>Сумма к получению считается по курсу на момент заявки.</p>
         </article>
         <article class="feature-card">
           <i class="fas fa-wallet"></i>
-          <h3>Выплата на ваш адрес</h3>
-          <p>Адрес для получения вводите вы. Ethereum, BNB Smart Chain, Polygon, Optimism, Arbitrum и TON.</p>
+          <h3>Реквизиты получения</h3>
+          <p>Адрес выплаты указываете вы: Ethereum, BNB Smart Chain, Polygon, Optimism, Arbitrum или TON.</p>
         </article>
       </div>
     </div>
@@ -112,8 +112,8 @@
 
   <section class="cta-section">
     <div class="container">
-      <h2>Обменять и оставить остальное на кошельке</h2>
-      <a href="dashboard.html" class="btn neon-btn large">Перейти к форме <i class="fas fa-arrow-right"></i></a>
+      <h2>Создайте заявку на обмен</h2>
+      <a href="dashboard.html" class="btn neon-btn large">Перейти к обмену <i class="fas fa-arrow-right"></i></a>
     </div>
   </section>
 
@@ -121,11 +121,11 @@
     <div class="container footer-content">
       <div class="footer-logo">
         <img src="logo.svg" alt="" height="32"/>
-        <p>BlockPorter © 2026. Ключи остаются у вас.</p>
+        <p>BlockPorter © 2026. Обмен криптовалют.</p>
       </div>
       <div class="footer-links">
-        <a href="about.html">О проекте</a>
-        <a href="terms.html">Условия</a>
+        <a href="about.html">О сервисе</a>
+        <a href="terms.html">Правила</a>
         <a href="about.html#contact">Контакты</a>
       </div>
     </div>

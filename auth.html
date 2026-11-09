@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — Вход</title>
+  <title>BlockPorter — Вход в кабинет</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -17,8 +17,8 @@
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
         <a href="dashboard.html">Обмен</a>
-        <a href="about.html">О проекте</a>
-        <a href="profile.html">Профиль</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
       </nav>
       <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
@@ -31,30 +31,27 @@
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
       <a href="dashboard.html">Обмен</a>
-      <a href="about.html">О проекте</a>
-      <a href="profile.html">Профиль</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
     </nav>
   </header>
 
   <main class="auth-main">
     <div class="auth-card">
-      <h2>Вход в BlockPorter</h2>
-      <p class="auth-subtitle">Вход не просит секретную фразу. Google показывает почту, MetaMask — адрес. Деньги с этого шага не списываются.</p>
+      <h2>Вход в кабинет</h2>
+      <p class="auth-subtitle">Заявку можно создать и без входа. Здесь откроется почта Google или адрес кошелька. Средства на этом шаге не списываются, секретная фраза не нужна.</p>
 
       <button id="google-login" class="btn auth-btn google-btn" type="button">
-        <i class="fab fa-google"></i> Через Google
+        <i class="fab fa-google"></i> Войти через Google
       </button>
 
       <div class="divider"><span>или</span></div>
 
-      <button id="metamask-login" class="btn auth-btn metamask-btn" type="button">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="" class="wallet-icon" width="24" height="24"/>
-        Через MetaMask
-      </button>
+      <button id="metamask-login" class="btn auth-btn metamask-btn" type="button">Войти через кошелёк</button>
 
       <p id="auth-error" class="error-message" hidden></p>
-      <p class="hint">Google и MetaMask открываются со страницы http://, а не из файла на диске.</p>
+      <p class="hint">Вход открывается по ссылке сайта, не из файла на диске. На телефоне страница откроется в MetaMask или Trust Wallet.</p>
     </div>
     <div id="loading" class="spinner" aria-hidden="true"><div class="spinner-circle"></div></div>
   </main>

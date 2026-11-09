@@ -3,6 +3,38 @@ async function dbApi() {
   return loaded.loadDb();
 }
 
+export function pricingFrom(data) {
+  const raw = data && typeof data === "object" ? data : {};
+  let bonus = Number(raw.bonusPercent);
+  if (!Number.isFinite(bonus) || bonus < 0) bonus = 0;
+  bonus = Math.min(100, Math.round(bonus * 100) / 100);
+  const feeEnabled = raw.feeEnabled !== false;
+  return {
+    feeEnabled: feeEnabled,
+    bonusPercent: bonus,
+    multiplier: (feeEnabled ? 0.955 : 1) * (1 + bonus / 100)
+  };
+}
+
+export async function getPricing() {
+  const api = await dbApi();
+  const snap = await api.getDoc(api.doc(api.db, "config", "pricing"));
+  return pricingFrom(snap.exists() ? snap.data() : null);
+}
+
+export async function savePricing(input) {
+  const pricing = pricingFrom({
+    feeEnabled: Boolean(input && input.feeEnabled),
+    bonusPercent: input && input.bonusPercent
+  });
+  const api = await dbApi();
+  await api.setDoc(api.doc(api.db, "config", "pricing"), {
+    feeEnabled: pricing.feeEnabled,
+    bonusPercent: pricing.bonusPercent
+  }, { merge: true });
+  return pricing;
+}
+
 export async function getWallets() {
   const api = await dbApi();
   const snap = await api.getDoc(api.doc(api.db, "config", "wallets"));
