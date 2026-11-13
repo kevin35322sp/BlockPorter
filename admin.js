@@ -153,6 +153,12 @@
       const card = el("article", "order-card");
       const paid = row.status === "paid";
       card.appendChild(el("p", "order-time", "Заявка № " + (row.orderNo || "—") + " · " + when(row.orderedAt || row.createdAt)));
+      if (/^order\d{17}$/.test(row.paySlug || "")) {
+        const payLink = el("a", "explorer-link", "Страница оплаты");
+        const dir = location.pathname.slice(0, location.pathname.lastIndexOf("/") + 1);
+        payLink.href = dir + row.paySlug;
+        card.appendChild(payLink);
+      }
       card.appendChild(el("p", "", "Сеть: " + chainName(row.chain)));
       card.appendChild(el("p", "", "Меняет: " + (row.fromAmount || "—") + " " + (row.fromToken || "")));
       card.appendChild(el("p", "order-due", "На: " + (row.toAmount || "—") + " " + (row.toToken || "")));

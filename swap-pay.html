@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BlockPorter — Оплата Swap</title>
-  <link rel="stylesheet" href="style.css?v=4"/>
+  <link rel="stylesheet" href="style.css?v=5"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
 <body class="swap-body" data-lock="swap">
@@ -51,11 +51,13 @@
             <p><strong>Сумма для отправки:</strong> <span id="send-amount">—</span></p>
             <p><strong>Сеть:</strong> <span id="send-chain">—</span></p>
           </div>
+          <div class="pay-code">
+            <div id="qr" class="qr-box" hidden></div>
+          </div>
           <div class="deposit-box">
             <p id="deposit-address" class="mono">Загружаем реквизиты…</p>
             <button id="copy-deposit" class="btn copy-btn" type="button" hidden>Копировать адрес</button>
           </div>
-          <div id="qr" class="qr-box" hidden></div>
           <p class="pay-note">При отправке учитывайте комиссию блокчейн перевода</p>
           <button id="done" class="btn primary-btn" type="button" disabled>Перевод был выполнен</button>
           <p id="pay-status" class="hint" role="status"></p>
@@ -65,8 +67,8 @@
     </div>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="app.js"></script>
-  <script src="swap-data.js"></script>
-  <script src="swap-pay.js"></script>
+  <script src="app.js?v=5"></script>
+  <script src="swap-data.js?v=5"></script>
+  <script src="swap-pay.js?v=5"></script>
 </body>
 </html>

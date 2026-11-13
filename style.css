@@ -3144,6 +3144,31 @@ body.pages-ready.page-locked[data-lock] .page-closed { display: block !important
 
 .cta-actions { justify-content: center; }
 
+html[data-order="pay"] body[data-lock] .page-live { display: block !important; }
+
+html[data-order="pay"] body[data-lock] .page-closed { display: none !important; }
+
+.swap-main .pay-code {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 28px 0;
+}
+
+.swap-main .pay-code .qr-box {
+  margin: 0 auto;
+}
+
+.swap-main .pay-details,
+.swap-main .pay-details .swap-details,
+.swap-main .pay-details .deposit-box,
+.swap-main .pay-details .pay-note,
+.swap-main .pay-details .hint,
+.swap-main .pay-details .back-link {
+  text-align: center;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

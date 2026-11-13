@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BlockPorter — Заявка Swap</title>
-  <link rel="stylesheet" href="style.css?v=4"/>
+  <link rel="stylesheet" href="style.css?v=5"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
 <body class="swap-body" data-lock="swap">
@@ -46,12 +46,13 @@
         <p id="missing" class="error-message" hidden>Заявка не заполнена. <a href="swap.html">Вернуться к Swap</a></p>
         <div id="review-details" class="swap-details" hidden></div>
         <button id="go-pay" class="btn primary-btn" type="button" hidden>Обменять</button>
+        <p id="review-status" class="hint" role="status"></p>
         <a id="edit-link" class="back-link" href="swap.html" hidden>Изменить данные</a>
       </div>
     </div>
   </main>
-  <script src="app.js"></script>
-  <script src="swap-data.js"></script>
-  <script src="swap-review.js"></script>
+  <script src="app.js?v=5"></script>
+  <script src="swap-data.js?v=5"></script>
+  <script src="swap-review.js?v=5"></script>
 </body>
 </html>

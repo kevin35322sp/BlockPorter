@@ -1,4 +1,35 @@
 (function () {
+  function dropSiteCookies() {
+    const parts = document.cookie ? document.cookie.split(";") : [];
+    parts.forEach(function (part) {
+      const name = part.split("=")[0].trim();
+      if (!name) return;
+      document.cookie = name + "=; Max-Age=0; path=/";
+      document.cookie = name + "=; Max-Age=0; path=" + location.pathname;
+    });
+  }
+
+  function siteRoot() {
+    const path = location.pathname || "/";
+    const order = path.match(/\/order\d{17}$/);
+    if (order) return path.slice(0, order.index + 1) || "/";
+    const slash = path.lastIndexOf("/");
+    return slash >= 0 ? path.slice(0, slash + 1) : "/";
+  }
+
+  function armFreshLoad() {
+    dropSiteCookies();
+    if (window.caches && window.caches.keys) {
+      window.caches.keys().then(function (keys) {
+        keys.forEach(function (key) { window.caches.delete(key); });
+      }).catch(function () {});
+    }
+    if (!navigator.serviceWorker || !navigator.serviceWorker.register) return;
+    navigator.serviceWorker.register(siteRoot() + "sw.js").catch(function () {});
+  }
+
+  armFreshLoad();
+
   const chains = {
     ethereum: "Ethereum",
     bsc: "BNB Smart Chain",
@@ -441,7 +472,7 @@
     }).then(function (authApi) {
       authApi.onAuthStateChanged(authApi.auth, function (user) {
         if (!user || !user.email) return;
-        import("./ledger.js").then(function (ledger) {
+        import("./ledger.js?v=5").then(function (ledger) {
           return ledger.isAdmin(user.email);
         }).then(function (ok) {
           writeKey("bpIsAdmin", ok ? "1" : "");
@@ -609,7 +640,7 @@
     });
   }
 
-  window.BP.pricingReady = withTimeout(import("./ledger.js").then(function (ledger) {
+  window.BP.pricingReady = withTimeout(import("./ledger.js?v=5").then(function (ledger) {
     return ledger.getPricing();
   }).then(function (pricing) {
     window.BP.pricing = pricing;

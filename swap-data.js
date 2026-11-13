@@ -158,6 +158,44 @@
     return list;
   }
 
+  function pad(value, width) {
+    var text = String(value);
+    while (text.length < width) text = "0" + text;
+    return text;
+  }
+
+  function orderSlug(orderNo, iso) {
+    var number = Number(orderNo);
+    var date = new Date(iso);
+    if (!Number.isInteger(number) || number < 1 || number > 100) return "";
+    if (Number.isNaN(date.getTime())) return "";
+    return "order"
+      + pad(number, 3)
+      + pad(date.getHours(), 2)
+      + pad(date.getMinutes(), 2)
+      + pad(date.getSeconds(), 2)
+      + pad(date.getDate(), 2)
+      + pad(date.getMonth() + 1, 2)
+      + String(date.getFullYear());
+  }
+
+  function orderSlugFromPath() {
+    var path = String((typeof location !== "undefined" && location.pathname) || "");
+    var match = path.match(/\/(order\d{17})$/);
+    if (!match) return "";
+    var slug = match[1];
+    var number = Number(slug.slice(5, 8));
+    var hh = Number(slug.slice(8, 10));
+    var mm = Number(slug.slice(10, 12));
+    var ss = Number(slug.slice(12, 14));
+    var dd = Number(slug.slice(14, 16));
+    var month = Number(slug.slice(16, 18));
+    var year = Number(slug.slice(18, 22));
+    if (!Number.isInteger(number) || number < 1 || number > 100) return "";
+    if (hh > 23 || mm > 59 || ss > 59 || dd < 1 || dd > 31 || month < 1 || month > 12 || year < 2020 || year > 2100) return "";
+    return slug;
+  }
+
   root.BPSwap = {
     natives: natives,
     tokens: tokens,
@@ -173,6 +211,8 @@
     parseUnits: parseUnits,
     encodeTransfer: encodeTransfer,
     isTxHash: isTxHash,
-    explorerTx: explorerTx
+    explorerTx: explorerTx,
+    orderSlug: orderSlug,
+    orderSlugFromPath: orderSlugFromPath
   };
 })(typeof window !== "undefined" ? window : globalThis);

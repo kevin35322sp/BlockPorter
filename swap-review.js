@@ -3,6 +3,7 @@
   const missing = document.getElementById("missing");
   const goPay = document.getElementById("go-pay");
   const editLink = document.getElementById("edit-link");
+  const reviewStatus = document.getElementById("review-status");
 
   function swapOpen() {
     const pricing = window.BP && window.BP.pricing;
@@ -93,9 +94,32 @@
     editLink.hidden = false;
   }
 
-  goPay.addEventListener("click", function () {
-    if (!readDraft()) return;
-    location.href = "swap-pay.html";
+  function saveError(err) {
+    const code = String((err && err.code) || "");
+    const message = String((err && err.message) || "");
+    if (code.indexOf("permission") !== -1 || /permission|disabled|has not been used/i.test(message)) {
+      return "Страница оплаты не сохранилась. Создайте Firestore в проекте blockporter-1 и вставьте правила из файла firestore.rules.";
+    }
+    return message || "Не удалось открыть страницу оплаты";
+  }
+
+  goPay.addEventListener("click", async function () {
+    const draft = readDraft();
+    if (!draft || !swapOpen() || !window.BPSwap) return;
+    const slug = window.BPSwap.orderSlug(draft.orderNo, draft.orderedAt);
+    if (!slug) return;
+    goPay.disabled = true;
+    reviewStatus.textContent = "Открываем страницу оплаты…";
+    try {
+      const ledger = await import("./ledger.js?v=5");
+      await ledger.savePayPage(slug, draft);
+      const path = location.pathname;
+      const dir = path.slice(0, path.lastIndexOf("/") + 1);
+      location.assign(dir + slug);
+    } catch (err) {
+      reviewStatus.textContent = saveError(err);
+      goPay.disabled = false;
+    }
   });
 
   document.addEventListener("bp-pricing", show);

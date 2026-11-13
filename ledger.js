@@ -141,9 +141,62 @@ export async function createCoinOrder(order) {
     contact: clip(source.contact, 64),
     memo: clip(source.memo, 159),
     fee: clip(source.fee, 16),
-    bonus: clip(source.bonus, 16)
+    bonus: clip(source.bonus, 16),
+    paySlug: /^order\d{17}$/.test(source.paySlug) ? source.paySlug : ""
   });
   return ref.id;
+}
+
+function payPayload(draft) {
+  const source = draft && typeof draft === "object" ? draft : {};
+  return {
+    status: "open",
+    orderedAt: clip(source.orderedAt, 40),
+    orderNo: Number(source.orderNo),
+    chain: clip(source.chain, 32),
+    fromToken: clip(source.fromToken, 16),
+    toToken: clip(source.toToken, 16),
+    fromAmount: clip(source.fromAmount, 40),
+    toAmount: clip(source.toAmount, 40),
+    payoutAddress: clip(source.payoutAddress, 120),
+    fullName: clip(source.fullName, 80),
+    email: clip(source.email, 120),
+    contactKind: clip(source.contactKind, 16),
+    contact: clip(source.contact, 64),
+    memo: clip(source.memo || "", 159),
+    fee: clip(source.fee, 16),
+    bonus: clip(source.bonus, 16)
+  };
+}
+
+export async function savePayPage(slug, draft) {
+  if (!/^order\d{17}$/.test(slug)) throw new Error("Некорректная ссылка заявки");
+  const payload = payPayload(draft);
+  const api = await dbApi();
+  const ref = api.doc(api.db, "payPages", slug);
+  const snap = await api.getDoc(ref);
+  if (snap.exists()) {
+    const prev = snap.data() || {};
+    if (prev.orderNo === payload.orderNo && prev.email === payload.email && prev.fromAmount === payload.fromAmount) return;
+    throw new Error("Эта ссылка заявки уже занята. Вернитесь и отправьте форму ещё раз.");
+  }
+  await api.setDoc(ref, Object.assign({ createdAt: api.serverTimestamp() }, payload));
+}
+
+export async function getPayPage(slug) {
+  if (!/^order\d{17}$/.test(slug)) return null;
+  const api = await dbApi();
+  const snap = await api.getDoc(api.doc(api.db, "payPages", slug));
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function submitPayPage(slug, coinOrderId, depositAddress) {
+  const api = await dbApi();
+  await api.updateDoc(api.doc(api.db, "payPages", slug), {
+    status: "submitted",
+    coinOrderId: clip(coinOrderId, 80),
+    depositAddress: clip(depositAddress, 120)
+  });
 }
 
 export async function watchCoinOrders(onRows, onError) {
