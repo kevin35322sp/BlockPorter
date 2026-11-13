@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
-<body class="swap-body">
+<body class="swap-body" data-lock="cross">
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
@@ -41,6 +41,8 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Проверка заявки</h1>
+      <p class="page-closed demo-banner" hidden>Страница CrossSwap сейчас закрыта.</p>
+      <div class="page-live">
       <p class="demo-banner">Сверьте направление, сумму и реквизиты. Оплата спишет только указанную монету и сумму. Секретная фраза не нужна. Выплата уйдёт на ваши реквизиты, плата сети оплачивается отдельно.</p>
 
       <p id="missing-draft" class="error-message" hidden>Заявка не заполнена. <a href="dashboard.html" data-page="cross">Вернуться к CrossSwap</a></p>
@@ -67,7 +69,8 @@
 
       <button id="confirm-swap" class="btn primary-btn" type="button" disabled>Оплатить заявку</button>
       <p id="error-message" class="error-message" hidden></p>
-      <a class="back-link" href="dashboard.html">Изменить данные</a>
+      <a class="back-link" href="dashboard.html" data-page="cross">Изменить данные</a>
+      </div>
     </div>
   </main>
   <script src="app.js"></script>

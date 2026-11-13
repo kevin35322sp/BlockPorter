@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
-<body class="swap-body">
+<body class="swap-body" data-lock="cross">
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
@@ -41,6 +41,8 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Заявка принята</h1>
+      <p class="page-closed demo-banner" hidden>Страница CrossSwap сейчас закрыта.</p>
+      <div class="page-live">
       <div id="loader" class="loader" role="status" aria-label="Сохраняем"></div>
       <p id="processing-text" class="processing-message">Создаём заявку…</p>
       <p id="missing-receipt" class="error-message" hidden>Заявка не найдена. <a href="dashboard.html" data-page="cross">Создать заявку</a></p>
@@ -48,6 +50,7 @@
         <p id="result-lead" class="success-message">Заявка создана. Выплата поступит на указанные реквизиты.</p>
         <div id="result-body" class="swap-details"></div>
         <a class="btn primary-btn" href="dashboard.html" data-page="cross">Новая заявка</a>
+      </div>
       </div>
     </div>
   </main>

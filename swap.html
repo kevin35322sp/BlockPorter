@@ -8,7 +8,7 @@
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
-<body class="swap-body">
+<body class="swap-body" data-lock="swap">
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
@@ -42,8 +42,8 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Swap</h1>
-      <p id="page-closed" class="demo-banner" hidden>Страница Swap сейчас закрыта.</p>
-      <div id="swap-open">
+      <p id="page-closed" class="page-closed demo-banner" hidden>Страница Swap сейчас закрыта.</p>
+      <div id="swap-open" class="page-live">
         <p class="demo-banner">Выберите сеть и две монеты в ней. Оплата — один перевод на реквизиты оператора. Секретная фраза не нужна, выплата уйдёт на кошелёк из заявки.</p>
         <form id="swap-form" class="swap-form">
           <div class="network-group">

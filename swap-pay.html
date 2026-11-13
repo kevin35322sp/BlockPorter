@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
 </head>
-<body class="swap-body">
+<body class="swap-body" data-lock="swap">
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
@@ -41,8 +41,8 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">Оплата заявки</h1>
-      <p id="page-closed" class="demo-banner" hidden>Страница Swap сейчас закрыта.</p>
-      <div id="pay-open">
+      <p id="page-closed" class="page-closed demo-banner" hidden>Страница Swap сейчас закрыта.</p>
+      <div id="pay-open" class="page-live">
         <p id="missing" class="error-message" hidden>Заявка не заполнена. <a href="swap.html">Вернуться к Swap</a></p>
         <div id="pay-details" hidden>
           <p class="hint">Отправьте эту сумму из своего кошелька на адрес ниже. Сайт перевод не подписывает. Секретная фраза не нужна.</p>

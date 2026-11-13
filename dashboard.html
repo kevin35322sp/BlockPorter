@@ -8,7 +8,7 @@
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
-<body class="swap-body">
+<body class="swap-body" data-lock="cross">
   <header class="header">
     <div class="container">
       <a href="index.html" class="logo">
@@ -42,7 +42,8 @@
   <main class="swap-main">
     <div class="swap-card glass-effect">
       <h1 class="swap-title">CrossSwap</h1>
-      <p id="page-closed" class="demo-banner" hidden>Страница CrossSwap сейчас закрыта.</p>
+      <p id="page-closed" class="page-closed demo-banner" hidden>Страница CrossSwap сейчас закрыта.</p>
+      <div class="page-live">
       <p id="page-intro" class="demo-banner">Выберите направление и сумму. К оплате уйдёт только эта монета и эта сумма, секретная фраза не нужна. <span data-pricing="fee">Комиссия 4.5% включена в курс.</span></p>
 
       <div class="wallet-section">
@@ -150,6 +151,7 @@
         <p class="commission-info"><span data-pricing="fee">Комиссия 4.5% включена в курс. </span><span data-pricing="bonus" hidden></span>Плата сети оплачивается отдельно.</p>
         <p id="rate-info" class="rate-info">Укажите сумму</p>
       </form>
+      </div>
     </div>
   </main>
   <script src="app.js"></script>

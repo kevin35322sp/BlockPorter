@@ -2962,7 +2962,7 @@ button.swap-arrow-down {
 
 .profile-card .logout-btn { cursor: pointer; }
 
-#result[hidden], [hidden] { display: none !important; }
+#result[hidden], [hidden], [data-page].is-off { display: none !important; }
 
 .profile-card .connect-prompt { padding: 12px 0 0; }
 

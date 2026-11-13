@@ -300,7 +300,10 @@
       await ledgerApi.saveWallets(next);
       walletStatus.textContent = "Адреса сохранены. Их увидят на страницах Swap и CrossSwap.";
     } catch (err) {
-      walletStatus.textContent = (err && err.message) || "Не удалось сохранить адреса";
+      const message = String((err && err.message) || "");
+      walletStatus.textContent = /permission|disabled|has not been used/i.test(message)
+        ? "База не приняла адреса. Создайте Firestore в проекте blockporter-1 и вставьте правила из файла firestore.rules."
+        : (message || "Не удалось сохранить адреса");
     } finally {
       button.disabled = false;
     }
@@ -359,7 +362,11 @@
         crossSwapEnabled: document.getElementById("cross-enabled").checked,
         coinSwapEnabled: document.getElementById("swap-enabled").checked
       });
-      pagesStatus.textContent = "Сохранено. CrossSwap " + (saved.crossSwapEnabled ? "включён" : "выключен") + ", Swap " + (saved.coinSwapEnabled ? "включён" : "выключен") + ".";
+      if (window.BP) {
+        window.BP.pricing = saved;
+        if (window.BP.applyPricingCopy) window.BP.applyPricingCopy(saved);
+      }
+      pagesStatus.textContent = "Сохранено. Выключенная страница сразу пропадает из меню. По ссылке форма тоже не откроется.";
     } catch (err) {
       pagesStatus.textContent = pricingErrorText(err);
     } finally {

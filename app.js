@@ -483,14 +483,35 @@
     return String(Math.round(Number(value) * 100) / 100);
   }
 
-  function applyPages(pricing) {
-    const crossOn = !pricing || pricing.crossSwapEnabled !== false;
-    const swapOn = !pricing || pricing.coinSwapEnabled !== false;
-    document.querySelectorAll("[data-page='cross']").forEach(function (node) {
-      node.hidden = !crossOn;
+  function pageFlags(pricing) {
+    const source = pricing || {};
+    return {
+      cross: source.crossSwapEnabled !== false,
+      swap: source.coinSwapEnabled !== false
+    };
+  }
+
+  function markLinks(name, open) {
+    document.querySelectorAll("[data-page='" + name + "']").forEach(function (node) {
+      node.hidden = !open;
+      node.classList.toggle("is-off", !open);
+      if (open) node.removeAttribute("aria-hidden");
+      else node.setAttribute("aria-hidden", "true");
     });
-    document.querySelectorAll("[data-page='swap']").forEach(function (node) {
-      node.hidden = !swapOn;
+  }
+
+  function applyPages(pricing) {
+    const state = pageFlags(pricing);
+    markLinks("cross", state.cross);
+    markLinks("swap", state.swap);
+    const lock = document.body && document.body.getAttribute("data-lock");
+    if (!lock) return;
+    const open = lock === "swap" ? state.swap : state.cross;
+    document.querySelectorAll(".page-live").forEach(function (node) {
+      node.hidden = !open;
+    });
+    document.querySelectorAll(".page-closed").forEach(function (node) {
+      node.hidden = open;
     });
   }
 
