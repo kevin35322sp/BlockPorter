@@ -39,12 +39,14 @@
 
   function swapOpen() {
     const pricing = window.BP && window.BP.pricing;
-    return !pricing || pricing.coinSwapEnabled !== false;
+    return !!(pricing && pricing.pagesKnown === true && pricing.coinSwapEnabled !== false);
   }
 
   function applyGate() {
+    const pricing = window.BP && window.BP.pricing;
     const open = swapOpen();
-    document.getElementById("page-closed").hidden = open;
+    const knownClosed = !!(pricing && pricing.pagesKnown === true && !open);
+    document.getElementById("page-closed").hidden = !knownClosed;
     document.getElementById("swap-open").hidden = !open;
   }
 

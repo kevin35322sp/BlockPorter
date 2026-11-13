@@ -2964,6 +2964,13 @@ button.swap-arrow-down {
 
 #result[hidden], [hidden], [data-page].is-off { display: none !important; }
 
+body[data-lock] .page-live,
+body[data-lock] .page-closed { display: none !important; }
+
+body.pages-ready[data-lock]:not(.page-locked) .page-live { display: block !important; }
+
+body.pages-ready.page-locked[data-lock] .page-closed { display: block !important; }
+
 .profile-card .connect-prompt { padding: 12px 0 0; }
 
 @media (max-width: 1100px) {

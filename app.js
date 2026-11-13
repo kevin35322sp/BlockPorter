@@ -485,6 +485,7 @@
 
   function pageFlags(pricing) {
     const source = pricing || {};
+    if (!source.pagesKnown) return { cross: false, swap: false };
     return {
       cross: source.crossSwapEnabled !== false,
       swap: source.coinSwapEnabled !== false
@@ -501,18 +502,36 @@
   }
 
   function applyPages(pricing) {
-    const state = pageFlags(pricing);
+    const source = pricing || {};
+    const known = source.pagesKnown === true;
+    const state = pageFlags(source);
     markLinks("cross", state.cross);
     markLinks("swap", state.swap);
-    const lock = document.body && document.body.getAttribute("data-lock");
-    if (!lock) return;
+    if (!document.body) return;
+    document.body.classList.toggle("pages-ready", known);
+    const lock = document.body.getAttribute("data-lock");
     const open = lock === "swap" ? state.swap : state.cross;
+    document.body.classList.toggle("page-locked", known && !!lock && !open);
     document.querySelectorAll(".page-live").forEach(function (node) {
-      node.hidden = !open;
+      node.hidden = !known || !open;
     });
     document.querySelectorAll(".page-closed").forEach(function (node) {
-      node.hidden = open;
+      node.hidden = !known || open || !lock;
     });
+    let wait = document.getElementById("page-wait");
+    if (source.pagesFailed && !known && lock) {
+      if (!wait) {
+        wait = document.createElement("p");
+        wait.id = "page-wait";
+        wait.className = "demo-banner";
+        const card = document.querySelector(".swap-card") || document.body;
+        card.appendChild(wait);
+      }
+      wait.hidden = false;
+      wait.textContent = "Не удалось прочитать, открыта ли страница. Обновите её.";
+    } else if (wait) {
+      wait.hidden = true;
+    }
   }
 
   function applyPricingCopy(pricing) {
@@ -562,7 +581,8 @@
       swapBonusPercent: 0,
       swapMultiplier: 0.955,
       crossSwapEnabled: true,
-      coinSwapEnabled: true
+      coinSwapEnabled: true,
+      pagesKnown: false
     },
     applyPricingCopy: applyPricingCopy
   };
@@ -597,8 +617,16 @@
     document.dispatchEvent(new CustomEvent("bp-pricing"));
     return pricing;
   }).catch(function () {
+    window.BP.pricing = Object.assign({}, window.BP.pricing, { pagesKnown: false, pagesFailed: true });
+    applyPages(window.BP.pricing);
     return window.BP.pricing;
   }), 4000);
+
+  window.setTimeout(function () {
+    if (window.BP.pricing && window.BP.pricing.pagesKnown) return;
+    window.BP.pricing = Object.assign({}, window.BP.pricing, { pagesFailed: true });
+    applyPages(window.BP.pricing);
+  }, 4000);
 
   window.BPWallets = {
     ready: ready,

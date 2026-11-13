@@ -31,17 +31,19 @@
 
   function deskOpen() {
     const pricing = window.BP && window.BP.pricing;
-    return !pricing || pricing.crossSwapEnabled !== false;
+    return !!(pricing && pricing.pagesKnown === true && pricing.crossSwapEnabled !== false);
   }
 
   function applyDeskGate() {
     const open = deskOpen();
+    const pricing = window.BP && window.BP.pricing;
+    const knownClosed = !!(pricing && pricing.pagesKnown === true && !open);
     const intro = document.getElementById("page-intro");
     const closed = document.getElementById("page-closed");
     const walletSection = document.querySelector(".wallet-section");
     const walletInfo = document.getElementById("wallet-info");
     if (intro) intro.hidden = !open;
-    if (closed) closed.hidden = open;
+    if (closed) closed.hidden = !knownClosed;
     if (walletSection) walletSection.hidden = !open;
     if (form) form.hidden = !open;
     if (walletHint) {
@@ -310,7 +312,9 @@
       walletsError = "";
     } catch (err) {
       wallets = {};
-      walletsError = "Реквизиты обмена сейчас не открылись. Обновите страницу через минуту.";
+      walletsError = location.protocol === "file:"
+        ? "Адрес приёма открывается по http, не из файла на диске."
+        : "Адрес приёма не открылся. В Firebase выберите проект blockporter-1, создайте базу Firestore, вставьте правила из файла firestore.rules и снова сохраните адреса на странице заявок.";
     }
     walletsReady = true;
     syncForm();

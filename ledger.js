@@ -23,7 +23,8 @@ export function pricingFrom(data) {
     swapBonusPercent: swapBonus,
     swapMultiplier: (swapFeeEnabled ? 0.955 : 1) * (1 + swapBonus / 100),
     crossSwapEnabled: raw.crossSwapEnabled !== false,
-    coinSwapEnabled: raw.coinSwapEnabled !== false
+    coinSwapEnabled: raw.coinSwapEnabled !== false,
+    pagesKnown: true
   };
 }
 
@@ -48,10 +49,30 @@ export async function savePricing(input) {
   return pricing;
 }
 
+function wait(ms) {
+  return new Promise(function (resolve) { setTimeout(resolve, ms); });
+}
+
+function readDenied(err) {
+  const code = String((err && err.code) || "");
+  const message = String((err && err.message) || "");
+  return code.indexOf("permission") !== -1 || /permission|disabled|has not been used/i.test(message);
+}
+
 export async function getWallets() {
-  const api = await dbApi();
-  const snap = await api.getDoc(api.doc(api.db, "config", "wallets"));
-  return snap.exists() ? snap.data() : {};
+  let last = null;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const api = await dbApi();
+      const snap = await api.getDoc(api.doc(api.db, "config", "wallets"));
+      return snap.exists() ? snap.data() : {};
+    } catch (err) {
+      last = err;
+      if (readDenied(err) || attempt === 2) break;
+      await wait(600 * (attempt + 1));
+    }
+  }
+  throw last;
 }
 
 export async function saveWallets(wallets) {

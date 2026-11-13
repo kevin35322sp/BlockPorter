@@ -12,16 +12,18 @@
   let draft = null;
   let deposit = "";
   let saving = false;
-  let started = false;
+  let loading = false;
 
   function swapOpen() {
     const pricing = window.BP && window.BP.pricing;
-    return !pricing || pricing.coinSwapEnabled !== false;
+    return !!(pricing && pricing.pagesKnown === true && pricing.coinSwapEnabled !== false);
   }
 
   function applyGate() {
+    const pricing = window.BP && window.BP.pricing;
     const open = swapOpen();
-    document.getElementById("page-closed").hidden = open;
+    const knownClosed = !!(pricing && pricing.pagesKnown === true && !open);
+    document.getElementById("page-closed").hidden = !knownClosed;
     document.getElementById("pay-open").hidden = !open;
   }
 
@@ -85,52 +87,64 @@
     status.textContent = "Заявка № " + draft.orderNo + " записана. Оператор сверит поступление и отправит выплату на указанный кошелёк.";
   }
 
+  function walletMissText() {
+    if (location.protocol === "file:") {
+      return "Адрес приёма открывается по http, не из файла на диске.";
+    }
+    return "Адрес приёма не открылся. В Firebase выберите проект blockporter-1, создайте базу Firestore, вставьте правила из файла firestore.rules и снова сохраните адреса на странице заявок.";
+  }
+
   async function loadDeposit() {
     applyGate();
     if (!swapOpen()) return;
-    if (started) return;
-    started = true;
-    draft = readDraft();
-    if (!draft) {
-      missing.hidden = false;
-      details.hidden = true;
-      return;
-    }
-    missing.hidden = true;
-    details.hidden = false;
-    orderNo.textContent = String(draft.orderNo);
-    sendAmount.textContent = draft.fromAmount + " " + draft.fromToken;
-    sendChain.textContent = chainName(draft.chain);
-    if (draft.savedId) {
-      depositAddress.textContent = draft.depositAddress || "Реквизиты уже были показаны";
-      copyDeposit.hidden = !draft.depositAddress;
-      deposit = draft.depositAddress || "";
-      drawQr(deposit);
-      showRecorded();
-      return;
-    }
-    depositAddress.textContent = "Загружаем реквизиты…";
-    copyDeposit.hidden = true;
-    done.disabled = true;
+    if (loading || deposit) return;
+    loading = true;
     try {
-      const ledger = await import("./ledger.js");
-      const wallets = await ledger.getWallets();
+      draft = readDraft();
+      if (!draft) {
+        missing.hidden = false;
+        details.hidden = true;
+        return;
+      }
+      missing.hidden = true;
+      details.hidden = false;
+      orderNo.textContent = String(draft.orderNo);
+      sendAmount.textContent = draft.fromAmount + " " + draft.fromToken;
+      sendChain.textContent = chainName(draft.chain);
+      if (draft.savedId) {
+        depositAddress.textContent = draft.depositAddress || "Реквизиты уже были показаны";
+        copyDeposit.hidden = !draft.depositAddress;
+        deposit = draft.depositAddress || "";
+        drawQr(deposit);
+        showRecorded();
+        return;
+      }
+      depositAddress.textContent = "Загружаем реквизиты…";
+      copyDeposit.hidden = true;
+      done.disabled = true;
+      let wallets = null;
+      try {
+        const ledger = await import("./ledger.js");
+        wallets = await ledger.getWallets();
+      } catch (err) {
+        deposit = "";
+        depositAddress.textContent = walletMissText();
+        return;
+      }
       deposit = String((wallets && wallets[draft.chain]) || "").trim();
-    } catch (err) {
-      deposit = "";
-      depositAddress.textContent = "Реквизиты сейчас не открылись. Обновите страницу.";
-      return;
+      if (!window.BPSwap.isReceiveAddress(draft.chain, deposit)) {
+        deposit = "";
+        depositAddress.textContent = "Реквизиты для этой сети ещё не заданы. Обмен сейчас не оформить.";
+        qr.hidden = true;
+        return;
+      }
+      depositAddress.textContent = deposit;
+      copyDeposit.hidden = false;
+      drawQr(deposit);
+      done.disabled = false;
+    } finally {
+      loading = false;
     }
-    if (!window.BPSwap.isReceiveAddress(draft.chain, deposit)) {
-      deposit = "";
-      depositAddress.textContent = "Реквизиты для этой сети ещё не заданы. Обмен сейчас не оформить.";
-      qr.hidden = true;
-      return;
-    }
-    depositAddress.textContent = deposit;
-    copyDeposit.hidden = false;
-    drawQr(deposit);
-    done.disabled = false;
   }
 
   copyDeposit.addEventListener("click", function () {
