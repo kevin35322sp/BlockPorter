@@ -15,7 +15,8 @@
       </a>
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
-        <a href="dashboard.html">Обмен</a>
+        <a href="dashboard.html" data-page="cross">CrossSwap</a>
+        <a href="swap.html" data-page="swap">Swap</a>
         <a href="about.html">О сервисе</a>
         <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
@@ -29,7 +30,8 @@
     <nav class="mobile-menu" id="mobile-menu">
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
-      <a href="dashboard.html">Обмен</a>
+      <a href="dashboard.html" data-page="cross">CrossSwap</a>
+      <a href="swap.html" data-page="swap">Swap</a>
       <a href="about.html">О сервисе</a>
       <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
@@ -41,7 +43,7 @@
       <h1 class="swap-title">Проверка заявки</h1>
       <p class="demo-banner">Сверьте направление, сумму и реквизиты. Оплата спишет только указанную монету и сумму. Секретная фраза не нужна. Выплата уйдёт на ваши реквизиты, плата сети оплачивается отдельно.</p>
 
-      <p id="missing-draft" class="error-message" hidden>Заявка не заполнена. <a href="dashboard.html">Вернуться к обмену</a></p>
+      <p id="missing-draft" class="error-message" hidden>Заявка не заполнена. <a href="dashboard.html" data-page="cross">Вернуться к CrossSwap</a></p>
 
       <div id="swap-details" class="swap-details">
         <p><strong>Отдаёте из сети:</strong> <span id="from-chain-display">—</span></p>

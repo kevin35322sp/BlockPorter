@@ -148,9 +148,20 @@
     return explorers[chain] + text;
   }
 
+  function coinsOn(chain) {
+    var list = [];
+    if (natives[chain]) list.push(natives[chain]);
+    var map = tokens[chain] || {};
+    Object.keys(map).forEach(function (symbol) {
+      if (list.indexOf(symbol) === -1) list.push(symbol);
+    });
+    return list;
+  }
+
   root.BPSwap = {
     natives: natives,
     tokens: tokens,
+    coinsOn: coinsOn,
     chainParams: chainParams,
     isEvmAddress: isEvmAddress,
     isTonAddress: isTonAddress,

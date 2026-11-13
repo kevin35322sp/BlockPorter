@@ -483,6 +483,17 @@
     return String(Math.round(Number(value) * 100) / 100);
   }
 
+  function applyPages(pricing) {
+    const crossOn = !pricing || pricing.crossSwapEnabled !== false;
+    const swapOn = !pricing || pricing.coinSwapEnabled !== false;
+    document.querySelectorAll("[data-page='cross']").forEach(function (node) {
+      node.hidden = !crossOn;
+    });
+    document.querySelectorAll("[data-page='swap']").forEach(function (node) {
+      node.hidden = !swapOn;
+    });
+  }
+
   function applyPricingCopy(pricing) {
     const feeOn = !pricing || pricing.feeEnabled !== false;
     document.querySelectorAll("[data-pricing='fee']").forEach(function (node) {
@@ -501,6 +512,7 @@
         node.textContent = "";
       }
     });
+    applyPages(pricing);
   }
 
   function boot() {
@@ -521,7 +533,16 @@
     logout: logout,
     refreshAuth: refreshAuth,
     googleError: googleError,
-    pricing: { feeEnabled: true, bonusPercent: 0, multiplier: 0.955 },
+    pricing: {
+      feeEnabled: true,
+      bonusPercent: 0,
+      multiplier: 0.955,
+      swapFeeEnabled: true,
+      swapBonusPercent: 0,
+      swapMultiplier: 0.955,
+      crossSwapEnabled: true,
+      coinSwapEnabled: true
+    },
     applyPricingCopy: applyPricingCopy
   };
 

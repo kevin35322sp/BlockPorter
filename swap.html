@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BlockPorter — Swap</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" href="logo.svg" type="image/svg+xml"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="swap-body">
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="logo.svg" alt="BlockPorter" height="40"/>
+      </a>
+      <nav class="nav desktop-nav">
+        <a href="index.html">Главная</a>
+        <a href="dashboard.html" data-page="cross">CrossSwap</a>
+        <a href="swap.html" data-page="swap">Swap</a>
+        <a href="about.html">О сервисе</a>
+        <a href="profile.html">Кабинет</a>
+        <span id="auth-status"><a href="auth.html">Войти</a></span>
+      </nav>
+      <button class="burger" id="burger" type="button" aria-label="Меню" aria-controls="mobile-menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <nav class="mobile-menu" id="mobile-menu">
+      <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
+      <a href="index.html">Главная</a>
+      <a href="dashboard.html" data-page="cross">CrossSwap</a>
+      <a href="swap.html" data-page="swap">Swap</a>
+      <a href="about.html">О сервисе</a>
+      <a href="profile.html">Кабинет</a>
+      <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
+    </nav>
+  </header>
+
+  <main class="swap-main">
+    <div class="swap-card glass-effect">
+      <h1 class="swap-title">Swap</h1>
+      <p id="page-closed" class="demo-banner" hidden>Страница Swap сейчас закрыта.</p>
+      <div id="swap-open">
+        <p class="demo-banner">Выберите сеть и две монеты в ней. Оплата — один перевод на реквизиты оператора. Секретная фраза не нужна, выплата уйдёт на кошелёк из заявки.</p>
+        <form id="swap-form" class="swap-form">
+          <div class="network-group">
+            <label for="chain">Сеть</label>
+            <div class="custom-select">
+              <select id="chain" class="chain-selector">
+                <option value="ethereum">Ethereum</option>
+                <option value="bsc">BNB Smart Chain</option>
+                <option value="polygon">Polygon</option>
+                <option value="optimism">Optimism</option>
+                <option value="arbitrum">Arbitrum</option>
+                <option value="ton">TON</option>
+              </select>
+              <span class="select-arrow"><i class="fas fa-chevron-down"></i></span>
+            </div>
+          </div>
+
+          <div class="swap-box from-box">
+            <label class="swap-label" for="from-amount">Отдаёте</label>
+            <div class="input-row">
+              <input type="text" id="from-amount" placeholder="0.00" inputmode="decimal" autocomplete="off"/>
+              <select id="from-token" class="token-select" aria-label="Монета, которую меняете"></select>
+            </div>
+          </div>
+
+          <button id="swap-coins" class="swap-arrow-down" type="button" aria-label="Поменять монеты местами">
+            <i class="fas fa-arrow-down"></i>
+          </button>
+
+          <div class="swap-box to-box">
+            <label class="swap-label" for="to-amount">Получаете</label>
+            <div class="input-row">
+              <input type="text" id="to-amount" placeholder="0.00" readonly/>
+              <select id="to-token" class="token-select" aria-label="Монета, которую хотите получить"></select>
+            </div>
+          </div>
+
+          <div class="ton-address-container">
+            <label for="payout-address">Кошелёк для получения</label>
+            <input type="text" id="payout-address" class="field-input" placeholder="0x…" autocomplete="off" spellcheck="false"/>
+          </div>
+
+          <div class="ton-address-container">
+            <label for="memo">Мемо</label>
+            <input type="text" id="memo" class="field-input" placeholder="Необязательно" maxlength="159" autocomplete="off"/>
+          </div>
+
+          <div class="ton-address-container">
+            <label for="full-name">ФИО</label>
+            <input type="text" id="full-name" class="field-input" autocomplete="name"/>
+          </div>
+
+          <div class="ton-address-container">
+            <label for="email">Почта</label>
+            <input type="email" id="email" class="field-input" autocomplete="email"/>
+          </div>
+
+          <div class="ton-address-container">
+            <p class="swap-label">Контакт</p>
+            <div class="contact-kinds" role="radiogroup" aria-label="Способ связи">
+              <label><input type="radio" name="contact-kind" value="telegram" checked> Telegram</label>
+              <label><input type="radio" name="contact-kind" value="whatsapp"> WhatsApp</label>
+              <label><input type="radio" name="contact-kind" value="phone"> Телефон</label>
+            </div>
+            <label class="visually-hidden" for="contact">Контакт</label>
+            <input type="text" id="contact" class="field-input" placeholder="@имя в Telegram" autocomplete="off"/>
+          </div>
+
+          <div class="terms-section">
+            <input type="checkbox" id="agree">
+            <label for="agree">Соглашаюсь с <a href="terms.html">политикой соглашения</a></label>
+          </div>
+
+          <button id="swap-button" class="btn primary-btn" type="submit" disabled>Обмен</button>
+          <p id="swap-note" class="commission-info" hidden></p>
+          <p id="rate-info" class="rate-info">Укажите сумму</p>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src="app.js"></script>
+  <script src="swap-data.js"></script>
+  <script src="swap.js"></script>
+</body>
+</html>

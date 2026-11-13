@@ -29,6 +29,27 @@
   const swapButton = document.getElementById("swap-button");
   const walletHint = document.getElementById("wallet-hint");
 
+  function deskOpen() {
+    const pricing = window.BP && window.BP.pricing;
+    return !pricing || pricing.crossSwapEnabled !== false;
+  }
+
+  function applyDeskGate() {
+    const open = deskOpen();
+    const intro = document.getElementById("page-intro");
+    const closed = document.getElementById("page-closed");
+    const walletSection = document.querySelector(".wallet-section");
+    const walletInfo = document.getElementById("wallet-info");
+    if (intro) intro.hidden = !open;
+    if (closed) closed.hidden = open;
+    if (walletSection) walletSection.hidden = !open;
+    if (form) form.hidden = !open;
+    if (walletHint) {
+      const connected = walletInfo && walletInfo.style.display !== "none";
+      walletHint.hidden = !open || connected;
+    }
+  }
+
   let priceCache = null;
   let priceAt = 0;
   let requestId = 0;
@@ -355,6 +376,7 @@
   });
 
   document.addEventListener("bp-pricing", function () {
+    applyDeskGate();
     if (fromAmountInput.value) updateAmount();
   });
 
@@ -365,7 +387,7 @@
 
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
-    if (swapButton.disabled) return;
+    if (!deskOpen() || swapButton.disabled) return;
     swapButton.disabled = true;
     await refreshWallets();
     const problem = formProblem();
@@ -411,5 +433,7 @@
   takeQueryDraft();
   syncForm();
   restoreWallet();
+  applyDeskGate();
+  if (window.BP && window.BP.pricingReady) window.BP.pricingReady.then(applyDeskGate);
   refreshWallets().then(updateAmount);
 })();

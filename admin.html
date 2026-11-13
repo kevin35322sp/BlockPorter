@@ -15,7 +15,8 @@
       </a>
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
-        <a href="dashboard.html">Обмен</a>
+        <a href="dashboard.html" data-page="cross">CrossSwap</a>
+        <a href="swap.html" data-page="swap">Swap</a>
         <a href="about.html">О сервисе</a>
         <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
@@ -29,7 +30,8 @@
     <nav class="mobile-menu" id="mobile-menu">
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
-      <a href="dashboard.html">Обмен</a>
+      <a href="dashboard.html" data-page="cross">CrossSwap</a>
+      <a href="swap.html" data-page="swap">Swap</a>
       <a href="about.html">О сервисе</a>
       <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
@@ -67,8 +69,25 @@
           <p id="wallet-status-line" class="hint" role="status"></p>
         </form>
 
+        <form id="pages-form" class="wallet-form">
+          <h2>Страницы на сайте</h2>
+          <label class="switch" for="cross-enabled">
+            <input id="cross-enabled" type="checkbox" checked>
+            <span class="switch-ui" aria-hidden="true"></span>
+            <span>CrossSwap</span>
+          </label>
+          <label class="switch" for="swap-enabled">
+            <input id="swap-enabled" type="checkbox" checked>
+            <span class="switch-ui" aria-hidden="true"></span>
+            <span>Swap</span>
+          </label>
+          <p class="hint">Выключенная страница пропадает из меню. По прямой ссылке вместо формы будет короткая надпись, что страница закрыта.</p>
+          <button id="save-pages" class="btn primary-btn" type="submit">Сохранить страницы</button>
+          <p id="pages-status" class="hint" role="status"></p>
+        </form>
+
         <form id="pricing-form" class="wallet-form">
-          <h2>Комиссия и доплата</h2>
+          <h2>CrossSwap: комиссия и доплата</h2>
           <label class="switch" for="fee-enabled">
             <input id="fee-enabled" type="checkbox" checked>
             <span class="switch-ui" aria-hidden="true"></span>
@@ -76,14 +95,32 @@
           </label>
           <label for="bonus-percent">Доплата сверху, %</label>
           <input id="bonus-percent" class="field-input" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="0">
-          <p class="hint">Доплата прибавляется к сумме, которую получит человек, уже после комиссии. 0 — без доплаты. Пока тумблер выключен, на сайте про комиссию не написано.</p>
-          <button id="save-pricing" class="btn primary-btn" type="submit">Сохранить условия</button>
+          <p class="hint">Это условие страницы CrossSwap. Доплата прибавляется к сумме получения уже после 4.5%. 0 — без доплаты. Пока тумблер выключен, на CrossSwap про комиссию не написано.</p>
+          <button id="save-pricing" class="btn primary-btn" type="submit">Сохранить условия CrossSwap</button>
           <p id="pricing-status" class="hint" role="status"></p>
         </form>
 
-        <h2 class="orders-title">Операции</h2>
-        <p id="orders-empty" class="hint" hidden>Заявок пока нет.</p>
+        <form id="swap-pricing-form" class="wallet-form">
+          <h2>Swap: условия курса</h2>
+          <label class="switch" for="swap-fee-enabled">
+            <input id="swap-fee-enabled" type="checkbox" checked>
+            <span class="switch-ui" aria-hidden="true"></span>
+            <span>4.5% в курсе</span>
+          </label>
+          <label for="swap-bonus-percent">Доплата сверху, %</label>
+          <input id="swap-bonus-percent" class="field-input" type="number" min="0" max="100" step="0.01" inputmode="decimal" placeholder="0">
+          <p class="hint">Это условие страницы Swap. Доплата прибавляется к сумме получения. 0 — без доплаты. Пока тумблер выключен, страница Swap эту долю в текстах не показывает.</p>
+          <button id="save-swap-pricing" class="btn primary-btn" type="submit">Сохранить условия Swap</button>
+          <p id="swap-pricing-status" class="hint" role="status"></p>
+        </form>
+
+        <h2 class="orders-title">Заявки CrossSwap</h2>
+        <p id="orders-empty" class="hint" hidden>Заявок CrossSwap пока нет.</p>
         <div id="orders" class="orders"></div>
+
+        <h2 class="orders-title">Заявки Swap</h2>
+        <p id="coin-orders-empty" class="hint" hidden>Заявок Swap пока нет.</p>
+        <div id="coin-orders" class="orders"></div>
       </div>
     </div>
   </main>

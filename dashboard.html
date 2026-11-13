@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlockPorter — Обмен криптовалют</title>
+  <title>BlockPorter — CrossSwap</title>
   <link rel="stylesheet" href="style.css"/>
   <link rel="icon" href="logo.svg" type="image/svg+xml"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -16,7 +16,8 @@
       </a>
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
-        <a href="dashboard.html">Обмен</a>
+        <a href="dashboard.html" data-page="cross">CrossSwap</a>
+        <a href="swap.html" data-page="swap">Swap</a>
         <a href="about.html">О сервисе</a>
         <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
@@ -30,7 +31,8 @@
     <nav class="mobile-menu" id="mobile-menu">
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
-      <a href="dashboard.html">Обмен</a>
+      <a href="dashboard.html" data-page="cross">CrossSwap</a>
+      <a href="swap.html" data-page="swap">Swap</a>
       <a href="about.html">О сервисе</a>
       <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
@@ -39,8 +41,9 @@
 
   <main class="swap-main">
     <div class="swap-card glass-effect">
-      <h1 class="swap-title">Обмен</h1>
-      <p class="demo-banner">Выберите направление и сумму. К оплате уйдёт только эта монета и эта сумма, секретная фраза не нужна. <span data-pricing="fee">Комиссия 4.5% включена в курс.</span></p>
+      <h1 class="swap-title">CrossSwap</h1>
+      <p id="page-closed" class="demo-banner" hidden>Страница CrossSwap сейчас закрыта.</p>
+      <p id="page-intro" class="demo-banner">Выберите направление и сумму. К оплате уйдёт только эта монета и эта сумма, секретная фраза не нужна. <span data-pricing="fee">Комиссия 4.5% включена в курс.</span></p>
 
       <div class="wallet-section">
         <button id="connect-wallet" class="btn neon-btn" type="button">Подключить кошелёк для оплаты</button>

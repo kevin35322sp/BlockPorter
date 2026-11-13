@@ -5,14 +5,22 @@
   const loginBtn = document.getElementById("admin-login");
   const form = document.getElementById("wallets-form");
   const pricingForm = document.getElementById("pricing-form");
+  const pagesForm = document.getElementById("pages-form");
+  const swapPricingForm = document.getElementById("swap-pricing-form");
   const walletStatus = document.getElementById("wallet-status-line");
   const pricingStatus = document.getElementById("pricing-status");
+  const pagesStatus = document.getElementById("pages-status");
+  const swapPricingStatus = document.getElementById("swap-pricing-status");
   const ordersNode = document.getElementById("orders");
   const emptyNode = document.getElementById("orders-empty");
+  const coinOrdersNode = document.getElementById("coin-orders");
+  const coinEmptyNode = document.getElementById("coin-orders-empty");
   const chains = ["ethereum", "bsc", "polygon", "optimism", "arbitrum", "ton"];
   const drafts = {};
+  const coinDrafts = {};
   let ledgerApi = null;
   let stopWatch = null;
+  let stopCoinWatch = null;
   let opening = false;
   let opened = false;
 
@@ -128,6 +136,65 @@
     });
   }
 
+  function contactTitle(kind) {
+    if (kind === "whatsapp") return "WhatsApp";
+    if (kind === "phone") return "Телефон";
+    if (kind === "telegram") return "Telegram";
+    return "Контакт";
+  }
+
+  function renderCoinOrders(rows) {
+    coinOrdersNode.querySelectorAll("input[data-coin-draft]").forEach(function (input) {
+      coinDrafts[input.getAttribute("data-coin-draft")] = input.value;
+    });
+    coinOrdersNode.replaceChildren();
+    coinEmptyNode.hidden = rows.length > 0;
+    rows.forEach(function (row) {
+      const card = el("article", "order-card");
+      const paid = row.status === "paid";
+      card.appendChild(el("p", "order-time", "Заявка № " + (row.orderNo || "—") + " · " + when(row.orderedAt || row.createdAt)));
+      card.appendChild(el("p", "", "Сеть: " + chainName(row.chain)));
+      card.appendChild(el("p", "", "Меняет: " + (row.fromAmount || "—") + " " + (row.fromToken || "")));
+      card.appendChild(el("p", "order-due", "На: " + (row.toAmount || "—") + " " + (row.toToken || "")));
+      if (row.fee && row.fee !== "0%") card.appendChild(el("p", "", "В курсе: " + row.fee));
+      if (row.bonus && row.bonus !== "0%") card.appendChild(el("p", "", "Доплата сверху: " + row.bonus));
+      card.appendChild(addressRow("Кошелёк для получения", row.payoutAddress || ""));
+      if (row.memo) card.appendChild(el("p", "", "Мемо: " + row.memo));
+      card.appendChild(el("p", "", "ФИО: " + (row.fullName || "—")));
+      card.appendChild(el("p", "", "Почта: " + (row.email || "—")));
+      card.appendChild(el("p", "", contactTitle(row.contactKind) + ": " + (row.contact || "—")));
+      card.appendChild(addressRow("Куда отправляли", row.depositAddress || ""));
+      card.appendChild(el("p", paid ? "status-paid" : "status-pending", paid ? "Выплачено" : "Ожидает выплату"));
+      if (paid && row.payoutTx) {
+        const out = (window.BPSwap && window.BPSwap.explorerTx(row.chain, row.payoutTx)) || "";
+        if (out && window.BPSwap.isTxHash(row.chain, row.payoutTx)) {
+          const link = el("a", "explorer-link", "Выплата в обозревателе");
+          link.href = out;
+          link.target = "_blank";
+          link.rel = "noopener";
+          card.appendChild(link);
+        } else {
+          card.appendChild(el("p", "mono", "Хеш выплаты: " + row.payoutTx));
+        }
+      }
+      if (!paid) {
+        const input = el("input", "field-input");
+        input.type = "text";
+        input.placeholder = "Хеш исходящей выплаты";
+        input.setAttribute("data-coin-draft", row.id);
+        input.value = coinDrafts[row.id] || "";
+        input.autocomplete = "off";
+        input.spellcheck = false;
+        const button = el("button", "btn primary-btn pay-btn", "Выплачено");
+        button.type = "button";
+        button.setAttribute("data-coin-pay", row.id);
+        card.appendChild(input);
+        card.appendChild(button);
+      }
+      coinOrdersNode.appendChild(card);
+    });
+  }
+
   async function openDesk(email) {
     if (opened || opening) return;
     opening = true;
@@ -153,12 +220,20 @@
         const pricing = await ledgerApi.getPricing();
         document.getElementById("fee-enabled").checked = pricing.feeEnabled;
         document.getElementById("bonus-percent").value = pricing.bonusPercent ? String(pricing.bonusPercent) : "";
+        document.getElementById("swap-fee-enabled").checked = pricing.swapFeeEnabled;
+        document.getElementById("swap-bonus-percent").value = pricing.swapBonusPercent ? String(pricing.swapBonusPercent) : "";
+        document.getElementById("cross-enabled").checked = pricing.crossSwapEnabled;
+        document.getElementById("swap-enabled").checked = pricing.coinSwapEnabled;
       } catch (err) {
-        pricingStatus.textContent = "Условия комиссии не прочитались. Вставьте обновлённые правила из файла firestore.rules.";
+        pricingStatus.textContent = "Условия не прочитались. Вставьте обновлённые правила из файла firestore.rules.";
       }
       stopWatch = await ledgerApi.watchOrders(renderOrders, function (err) {
         emptyNode.hidden = false;
-        emptyNode.textContent = (err && err.message) || "Не удалось читать заявки";
+        emptyNode.textContent = (err && err.message) || "Не удалось читать заявки CrossSwap";
+      });
+      stopCoinWatch = await ledgerApi.watchCoinOrders(renderCoinOrders, function (err) {
+        coinEmptyNode.hidden = false;
+        coinEmptyNode.textContent = (err && err.message) || "Не удалось читать заявки Swap. Вставьте обновлённые правила из файла firestore.rules.";
       });
       opened = true;
     } catch (err) {
@@ -223,7 +298,7 @@
     button.disabled = true;
     try {
       await ledgerApi.saveWallets(next);
-      walletStatus.textContent = "Адреса сохранены. Их увидят на странице обмена.";
+      walletStatus.textContent = "Адреса сохранены. Их увидят на страницах Swap и CrossSwap.";
     } catch (err) {
       walletStatus.textContent = (err && err.message) || "Не удалось сохранить адреса";
     } finally {
@@ -231,8 +306,8 @@
     }
   });
 
-  function readBonus() {
-    const text = document.getElementById("bonus-percent").value.trim().replace(",", ".");
+  function readPercent(id) {
+    const text = document.getElementById(id).value.trim().replace(",", ".");
     if (!text) return 0;
     if (!/^\d+(\.\d{1,2})?$/.test(text)) return null;
     const value = Number(text);
@@ -240,10 +315,18 @@
     return value;
   }
 
+  function pricingErrorText(err) {
+    const code = String((err && err.code) || "");
+    const message = String((err && err.message) || "");
+    return code.indexOf("permission") !== -1 || /permission/i.test(message)
+      ? "Firestore отклонил запись. Вставьте обновлённые правила из файла firestore.rules."
+      : (message || "Не удалось сохранить условия");
+  }
+
   pricingForm.addEventListener("submit", async function (event) {
     event.preventDefault();
     pricingStatus.textContent = "";
-    const bonus = readBonus();
+    const bonus = readPercent("bonus-percent");
     if (bonus == null) {
       pricingStatus.textContent = "Доплата — число от 0 до 100, не больше двух знаков после запятой.";
       return;
@@ -260,11 +343,51 @@
         ? "Сохранено. Комиссия 4.5%" + (saved.bonusPercent ? ", сверху доплата " + saved.bonusPercent + "%." : ", без доплаты.")
         : "Сохранено. Комиссия выключена" + (saved.bonusPercent ? ", сверху доплата " + saved.bonusPercent + "%." : ".");
     } catch (err) {
-      var code = String((err && err.code) || "");
-      var message = String((err && err.message) || "");
-      pricingStatus.textContent = code.indexOf("permission") !== -1 || /permission/i.test(message)
-        ? "Firestore отклонил запись. Вставьте обновлённые правила из файла firestore.rules."
-        : (message || "Не удалось сохранить условия");
+      pricingStatus.textContent = pricingErrorText(err);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  pagesForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    pagesStatus.textContent = "";
+    const button = document.getElementById("save-pages");
+    button.disabled = true;
+    try {
+      const saved = await ledgerApi.savePricing({
+        crossSwapEnabled: document.getElementById("cross-enabled").checked,
+        coinSwapEnabled: document.getElementById("swap-enabled").checked
+      });
+      pagesStatus.textContent = "Сохранено. CrossSwap " + (saved.crossSwapEnabled ? "включён" : "выключен") + ", Swap " + (saved.coinSwapEnabled ? "включён" : "выключен") + ".";
+    } catch (err) {
+      pagesStatus.textContent = pricingErrorText(err);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  swapPricingForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    swapPricingStatus.textContent = "";
+    const bonus = readPercent("swap-bonus-percent");
+    if (bonus == null) {
+      swapPricingStatus.textContent = "Доплата — число от 0 до 100, не больше двух знаков после запятой.";
+      return;
+    }
+    const button = document.getElementById("save-swap-pricing");
+    button.disabled = true;
+    try {
+      const saved = await ledgerApi.savePricing({
+        swapFeeEnabled: document.getElementById("swap-fee-enabled").checked,
+        swapBonusPercent: bonus
+      });
+      document.getElementById("swap-bonus-percent").value = saved.swapBonusPercent ? String(saved.swapBonusPercent) : "";
+      swapPricingStatus.textContent = saved.swapFeeEnabled
+        ? "Сохранено. В курсе Swap учтены 4.5%" + (saved.swapBonusPercent ? ", сверху доплата " + saved.swapBonusPercent + "%." : ", без доплаты.")
+        : "Сохранено. Страница Swap долю 4.5% не показывает" + (saved.swapBonusPercent ? ", сверху доплата " + saved.swapBonusPercent + "%." : ".");
+    } catch (err) {
+      swapPricingStatus.textContent = pricingErrorText(err);
     } finally {
       button.disabled = false;
     }
@@ -313,7 +436,35 @@
     if (location.protocol === "file:") showError("Откройте сайт по http://, не двойным щелчком по файлу.");
   });
 
+  coinOrdersNode.addEventListener("click", async function (event) {
+    const copyBtn = event.target.closest("[data-copy]");
+    if (copyBtn) {
+      copyText(copyBtn.getAttribute("data-copy"), copyBtn);
+      return;
+    }
+    const payBtn = event.target.closest("[data-coin-pay]");
+    if (!payBtn || !ledgerApi) return;
+    const id = payBtn.getAttribute("data-coin-pay");
+    const input = coinOrdersNode.querySelector('input[data-coin-draft="' + id + '"]');
+    const hash = input ? input.value.trim() : "";
+    if (hash.length < 8 || hash.length > 180) {
+      input.setCustomValidity("Вставьте хеш выплаты");
+      input.reportValidity();
+      return;
+    }
+    input.setCustomValidity("");
+    payBtn.disabled = true;
+    try {
+      await ledgerApi.markCoinPaid(id, hash);
+      delete coinDrafts[id];
+    } catch (err) {
+      payBtn.disabled = false;
+      window.alert((err && err.message) || "Не удалось отметить выплату");
+    }
+  });
+
   window.addEventListener("pagehide", function () {
     if (typeof stopWatch === "function") stopWatch();
+    if (typeof stopCoinWatch === "function") stopCoinWatch();
   });
 })();

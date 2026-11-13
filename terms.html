@@ -15,7 +15,8 @@
       </a>
       <nav class="nav desktop-nav">
         <a href="index.html">Главная</a>
-        <a href="dashboard.html">Обмен</a>
+        <a href="dashboard.html" data-page="cross">CrossSwap</a>
+        <a href="swap.html" data-page="swap">Swap</a>
         <a href="about.html">О сервисе</a>
         <a href="profile.html">Кабинет</a>
         <span id="auth-status"><a href="auth.html">Войти</a></span>
@@ -29,7 +30,8 @@
     <nav class="mobile-menu" id="mobile-menu">
       <button class="close-menu" id="close-menu" type="button" aria-label="Закрыть">×</button>
       <a href="index.html">Главная</a>
-      <a href="dashboard.html">Обмен</a>
+      <a href="dashboard.html" data-page="cross">CrossSwap</a>
+      <a href="swap.html" data-page="swap">Swap</a>
       <a href="about.html">О сервисе</a>
       <a href="profile.html">Кабинет</a>
       <span id="auth-status-mobile"><a href="auth.html">Войти</a></span>
@@ -46,7 +48,10 @@
         <p>Для TON оплату проводите из своего кошелька и указываете хеш перевода и адрес отправителя. На сайт попадают только эти данные, не ключ.</p>
         <p>Перед оплатой проверьте сеть, монету, сумму и реквизиты получения. После поступления оплаты выплата отправляется на этот адрес.</p>
       </div>
-      <a href="dashboard.html" class="btn primary-btn">Вернуться к обмену</a>
+      <div class="hero-buttons">
+        <a href="swap.html" class="btn primary-btn" data-page="swap">К Swap</a>
+        <a href="dashboard.html" class="btn outline-btn" data-page="cross">К CrossSwap</a>
+      </div>
     </div>
   </main>
   <script src="app.js"></script>
